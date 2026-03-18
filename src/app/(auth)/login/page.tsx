@@ -43,6 +43,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
+      localStorage.removeItem("demo_mode");
       router.push("/dashboard");
     } catch (error: any) {
       toast({
@@ -57,25 +58,19 @@ export default function LoginPage() {
 
   const handleDemoLogin = async () => {
     setIsDemoLoading(true);
-    try {
-      // Using a standard demo account
-      await signInWithEmailAndPassword(auth, "demo@govfin.ai", "password123");
+    // Bypass actual Firebase login for demo purposes
+    localStorage.setItem("demo_mode", "true");
+    setTimeout(() => {
       router.push("/dashboard");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Demo login failed",
-        description: "Please try regular login or register.",
-      });
-    } finally {
       setIsDemoLoading(false);
-    }
+    }, 800);
   };
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
+      localStorage.removeItem("demo_mode");
       router.push("/dashboard");
     } catch (error: any) {
       toast({

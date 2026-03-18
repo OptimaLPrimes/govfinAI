@@ -27,7 +27,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
-import { auth } from "@/lib/firebase";
+import { useAuth } from "@/firebase/provider";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -54,9 +54,15 @@ const userNavItems = [
 export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const auth = useAuth();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    localStorage.removeItem("demo_mode");
+    try {
+      await signOut(auth);
+    } catch (e) {
+      // Silently ignore sign out errors for demo mode
+    }
     router.push("/login");
   };
 
