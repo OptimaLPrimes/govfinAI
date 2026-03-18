@@ -21,7 +21,7 @@ type Message = {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  timestamp: Date;
+  timestamp: Date | null;
 };
 
 const suggestedPrompts = [
@@ -37,13 +37,18 @@ export default function AssistantPage() {
       id: "1",
       role: 'assistant',
       content: "Namaste! I am your GovFinAI assistant. How can I help you today with government schemes or your personal finances?",
-      timestamp: new Date(),
+      timestamp: null,
     }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Initialize first message timestamp after hydration
+    setMessages(prev => prev.map(m => m.id === "1" ? { ...m, timestamp: new Date() } : m));
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -131,7 +136,7 @@ export default function AssistantPage() {
                   </div>
                   <div className="flex items-center gap-3 mt-2 px-1">
                     <span className="text-[10px] text-muted-foreground uppercase font-medium">
-                      {m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {m.timestamp ? m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "..."}
                     </span>
                     {m.role === 'assistant' && (
                       <div className="flex items-center gap-2">

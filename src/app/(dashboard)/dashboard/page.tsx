@@ -43,6 +43,7 @@ const chartData = [
 export default function DashboardPage() {
   const auth = useAuth();
   const db = useFirestore();
+  const [currentDate, setCurrentDate] = useState<string>("");
   
   const userProfileRef = useMemo(() => {
     if (!auth.currentUser) return null;
@@ -50,6 +51,10 @@ export default function DashboardPage() {
   }, [auth.currentUser, db]);
 
   const { data: profile, loading } = useDoc<UserProfile>(userProfileRef);
+
+  useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
 
   const metrics = [
     { title: "Eligible Schemes", value: "14", change: "+2", icon: ShieldCheck, color: "text-accent bg-accent/10" },
@@ -72,7 +77,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold">Good morning, {profile?.name || "User"}</h1>
           <p className="text-muted-foreground mt-1">
-            {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            {currentDate || "Loading date..."}
           </p>
         </div>
         <div className="flex gap-2">
