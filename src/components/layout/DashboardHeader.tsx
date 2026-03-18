@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useState, useMemo } from "react";
 import { useAuth, useFirestore, useDoc } from "@/firebase";
@@ -22,7 +22,7 @@ import { UserProfile } from "@/lib/types";
 const languages = [
   { code: "en", name: "English" },
   { code: "hi", name: "हिन्दी" },
-  { code: "mr", name: "मराठी" },
+  { code: "mr", name: "मరాઠી" },
   { code: "ta", name: "தமிழ்" },
   { code: "te", name: "తెలుగు" },
   { code: "bn", name: "বাংলা" },
