@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -28,11 +27,16 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const auth = useAuth();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -42,6 +46,9 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
+      if (auth.app.options.apiKey === "placeholder-api-key") {
+        throw new Error("Firebase is not configured. Please use Demo Login.");
+      }
       await signInWithEmailAndPassword(auth, values.email, values.password);
       localStorage.removeItem("demo_mode");
       router.push("/dashboard");
@@ -69,6 +76,9 @@ export default function LoginPage() {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      if (auth.app.options.apiKey === "placeholder-api-key") {
+        throw new Error("Firebase is not configured. Please use Demo Login.");
+      }
       await signInWithPopup(auth, provider);
       localStorage.removeItem("demo_mode");
       router.push("/dashboard");
@@ -80,6 +90,10 @@ export default function LoginPage() {
       });
     }
   };
+
+  if (!mounted) {
+    return null; // Avoid hydration mismatch for browser-injected attributes
+  }
 
   return (
     <div className="flex h-screen w-full flex-col md:flex-row overflow-hidden bg-background">
@@ -107,7 +121,7 @@ export default function LoginPage() {
       </div>
       
       <div className="flex-1 flex items-center justify-center p-6 bg-white">
-        <div className="w-full max-w-sm space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+        <div className="w-full max-w-sm space-y-8">
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Login</h2>
             <p className="text-muted-foreground mt-2">Enter your credentials to access your account</p>
