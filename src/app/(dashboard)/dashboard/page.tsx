@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, limit, getDocs } from "firebase/firestore";
-import { UserProfile, Transaction } from "@/lib/types";
+import { useEffect, useState, useMemo } from "react";
+import { useAuth, useFirestore, useDoc } from "@/firebase";
+import { doc } from "firebase/firestore";
+import { UserProfile } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ import {
   Bot,
   TrendingUp,
   ArrowUpRight,
-  ArrowDownRight,
   ShieldCheck,
   Zap,
   Clock,
@@ -42,22 +41,15 @@ const chartData = [
 ];
 
 export default function DashboardPage() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const auth = useAuth();
+  const db = useFirestore();
+  
+  const userProfileRef = useMemo(() => {
+    if (!auth.currentUser) return null;
+    return doc(db, "users", auth.currentUser.uid);
+  }, [auth.currentUser, db]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (auth.currentUser) {
-        const docRef = doc(db, "users", auth.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfile(docSnap.data() as UserProfile);
-        }
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
+  const { data: profile, loading } = useDoc<UserProfile>(userProfileRef);
 
   const metrics = [
     { title: "Eligible Schemes", value: "14", change: "+2", icon: ShieldCheck, color: "text-accent bg-accent/10" },
@@ -65,6 +57,14 @@ export default function DashboardPage() {
     { title: "AI Insights", value: "8", change: "+1", icon: Zap, color: "text-warning bg-warning/10" },
     { title: "Pending Claims", value: "2", change: "0", icon: Clock, color: "text-slate-600 bg-slate-100" },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Clock className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

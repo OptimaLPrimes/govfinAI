@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bell, Globe, Search as SearchIcon, Menu } from "lucide-react";
+import { Bell, Globe, Search as SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,11 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useState, useEffect } from "react";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { useState, useMemo } from "react";
+import { useAuth, useFirestore, useDoc } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { UserProfile } from "@/lib/types";
 
 const languages = [
@@ -30,22 +30,16 @@ const languages = [
 ];
 
 export function DashboardHeader() {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const auth = useAuth();
+  const db = useFirestore();
   const [selectedLang, setSelectedLang] = useState("en");
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (auth.currentUser) {
-        const docRef = doc(db, "users", auth.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserProfile(docSnap.data() as UserProfile);
-          setSelectedLang(docSnap.data().language || "en");
-        }
-      }
-    };
-    fetchProfile();
-  }, []);
+  const userProfileRef = useMemo(() => {
+    if (!auth.currentUser) return null;
+    return doc(db, "users", auth.currentUser.uid);
+  }, [auth.currentUser, db]);
+
+  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
   return (
     <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex items-center justify-between px-4 md:px-6">
@@ -102,7 +96,7 @@ export function DashboardHeader() {
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Log out</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={() => auth.signOut()}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
