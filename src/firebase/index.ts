@@ -11,17 +11,20 @@ export function initializeFirebase(): { app: FirebaseApp; db: Firestore; auth: A
   
   let auth: Auth;
   try {
+    // Attempt to initialize Auth, but handle invalid configurations gracefully
     auth = getAuth(app);
   } catch (e) {
-    // Fail gracefully if API key is invalid/missing, allowing demo mode
-    console.warn("Firebase Auth failed to initialize. Ensure your API key is correct in src/firebase/config.ts");
+    console.warn("Firebase Auth failed to initialize. Falling back to mock for demo purposes.");
+    // Provide a minimal mock to prevent crashing the entire React tree
     auth = { 
       app,
       onAuthStateChanged: (cb: any) => {
         // Return dummy unsubscribe
         return () => {};
       },
-      signOut: async () => {},
+      signOut: async () => {
+        return Promise.resolve();
+      },
     } as unknown as Auth;
   }
 
