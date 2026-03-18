@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -26,67 +27,63 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: '#4F46E5',
+          foreground: '#FFFFFF',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: '#F3F4F6',
+          foreground: '#1F2937',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: '#F9FAFB',
+          foreground: '#6B7280',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: '#10B981',
+          foreground: '#FFFFFF',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        warning: {
+          DEFAULT: '#F59E0B',
+          foreground: '#FFFFFF',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        ring: '#4F46E5',
         chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
+          '1': '#4F46E5',
+          '2': '#10B981',
+          '3': '#F59E0B',
+          '4': '#6366F1',
+          '5': '#34D399',
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          primary: '#4F46E5',
+          'primary-foreground': '#FFFFFF',
+          accent: '#EEF2FF',
+          'accent-foreground': '#4F46E5',
           border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
+          ring: '#4F46E5',
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: '12px',
+        md: '8px',
+        sm: '4px',
       },
       keyframes: {
         'accordion-down': {
-          from: {
-            height: '0',
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)',
-          },
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)',
-          },
-          to: {
-            height: '0',
-          },
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
       },
       animation: {

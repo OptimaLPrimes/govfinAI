@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "scheme-hero",
+      "description": "Indian government building or emblem",
+      "imageUrl": "https://picsum.photos/seed/gov1/1200/400",
+      "imageHint": "government building"
+    },
+    {
+      "id": "avatar-user",
+      "description": "User profile avatar",
+      "imageUrl": "https://picsum.photos/seed/user1/200/200",
+      "imageHint": "profile person"
+    }
+  ]
 }
