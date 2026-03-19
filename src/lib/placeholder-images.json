@@ -11,6 +11,18 @@
       "description": "User profile avatar",
       "imageUrl": "https://picsum.photos/seed/user1/200/200",
       "imageHint": "profile person"
+    },
+    {
+      "id": "landing-hero",
+      "description": "Modern financial tech visualization",
+      "imageUrl": "https://picsum.photos/seed/fintech/1200/800",
+      "imageHint": "financial technology"
+    },
+    {
+      "id": "feature-schemes",
+      "description": "Indian citizens receiving benefits",
+      "imageUrl": "https://picsum.photos/seed/benefits/600/400",
+      "imageHint": "social welfare"
     }
   ]
 }

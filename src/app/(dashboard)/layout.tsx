@@ -1,9 +1,7 @@
 
 "use client";
 
-import { SidebarNav } from "@/components/layout/SidebarNav";
-import { DashboardHeader } from "@/components/layout/DashboardHeader";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { Navbar } from "@/components/layout/Navbar";
 import { useEffect, useState } from "react";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -41,18 +39,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!user && !isDemo) return null;
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full bg-background overflow-hidden">
-        <SidebarNav />
-        <SidebarInset className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <DashboardHeader />
-          <main className="flex-1 overflow-y-auto p-4 md:p-8">
-            <div className="max-w-7xl mx-auto space-y-8">
-              {children}
-            </div>
-          </main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+    <div className="flex flex-col min-h-screen bg-slate-50/50">
+      <Navbar />
+      <main className="flex-1 p-4 md:p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {children}
+        </div>
+      </main>
+      <footer className="py-8 border-t bg-white mt-auto">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-muted-foreground font-medium">
+          © {new Date().getFullYear()} GovFinAI Assistant. All rights reserved.
+        </div>
+      </footer>
+    </div>
   );
 }
