@@ -27,6 +27,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/firebase/provider";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
