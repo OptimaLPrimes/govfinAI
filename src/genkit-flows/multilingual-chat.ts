@@ -95,7 +95,7 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    // Consolidate all context into a single system prompt string
+    // Consolidate all context into a single system instruction to satisfy Gemini requirements
     let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. 
 Always respond in ${targetLanguage}. Be empathetic, clear, and helpful. Use the provided context to give highly personalized answers.
 
@@ -107,18 +107,18 @@ ${JSON.stringify(userProfile, null, 2)}`;
     }
 
     if (savedSchemes && savedSchemes.length > 0) {
-      systemInstruction += `\n\nSAVED SCHEMES (ID, Name, Ministry, Category):\n${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category})${s.briefDescription ? ` - ${s.briefDescription}` : ''}`).join('\n')}`;
+      systemInstruction += `\n\nSAVED SCHEMES:\n${savedSchemes.map(s => `- ${s.name} (${s.ministry}, ${s.category})`).join('\n')}`;
     }
 
     const combinedMessages: MessageData[] = [];
 
-    // Add exactly ONE system instruction at the beginning
+    // System message MUST be in the first position
     combinedMessages.push({
       role: 'system',
       content: [{ text: systemInstruction }],
     });
 
-    // Add conversation history
+    // Add remaining chat history
     messages.forEach(m => {
       combinedMessages.push({
         role: m.role as any,

@@ -66,7 +66,7 @@ export function Navbar() {
   };
 
   const userProfileRef = useMemo(() => {
-    // CRITICAL FIX: Guard against mock Firestore instances to prevent runtime crash
+    // CRITICAL: Prevent SDK crash by ensuring db is not a mock before calling doc()
     if (!user || !db || (db as any).__isMock) return null;
     try {
       return doc(db, "users", user.uid);
