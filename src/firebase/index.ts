@@ -18,8 +18,10 @@ export function initializeFirebase(): { app: FirebaseApp; db: Firestore; auth: A
     // Provide a minimal mock to prevent crashing the entire React tree
     auth = { 
       app,
-      onAuthStateChanged: (cb: any) => {
-        // Return dummy unsubscribe
+      onAuthStateChanged: (cb: (user: any) => void) => {
+        // Immediately notify the listener that no user is logged in
+        // This prevents the application from getting stuck in a loading state
+        cb(null);
         return () => {};
       },
       signOut: async () => {

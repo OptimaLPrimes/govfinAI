@@ -1,4 +1,3 @@
-
 "use client";
 
 // This file is currently not used in the new Navbar-based layout, 
@@ -95,8 +94,11 @@ export function DashboardHeader() {
           <DropdownMenuContent className="w-64 mt-2 rounded-2xl shadow-xl" align="end">
             <DropdownMenuLabel className="font-normal p-4">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-bold">{userProfile?.name || "Gov User"}</p>
-                <p className="text-xs text-muted-foreground">{userProfile?.email || "user@example.com"}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold leading-none">{userProfile?.name || "Gov User"}</p>
+                  <Badge variant="secondary" className="text-[8px] h-4 py-0 bg-primary/10 text-primary border-none">PREMIUM</Badge>
+                </div>
+                <p className="text-xs leading-none text-muted-foreground font-medium">{userProfile?.email || "user@example.com"}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

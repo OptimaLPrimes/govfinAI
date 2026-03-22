@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -16,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, Sparkles, ArrowRight, Loader2, Building2, Info } from "lucide-react";
+import { Search, Filter, Sparkles, ArrowRight, Loader2, Building2 } from "lucide-react";
 import Link from "next/link";
 import { useAuth, useFirestore, useDoc } from "@/firebase";
 import { doc } from "firebase/firestore";
@@ -182,24 +181,27 @@ export default function SchemesPage() {
   };
 
   const filteredSchemes = useMemo(() => {
-    // If AI results exist, map them back to the full scheme objects and rank them
     if (aiResults && aiResults.length > 0) {
-      return aiResults.map(res => {
-        const original = realSchemes.find(s => s.id === res.schemeId);
-        return {
-          ...original!,
-          match: `${res.matchScore}%`,
-          aiReason: res.matchReason,
-          missing: res.missingCriteria,
-        };
-      });
+      return aiResults
+        .map(res => {
+          const original = realSchemes.find(s => s.id === res.schemeId);
+          if (!original) return null;
+          return {
+            ...original,
+            match: `${res.matchScore}%`,
+            aiReason: res.matchReason,
+            missing: res.missingCriteria,
+          };
+        })
+        .filter((s): s is NonNullable<typeof s> => s !== null);
     }
 
-    // Default filter logic
-    return realSchemes.filter(scheme => 
-      scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      scheme.category.toLowerCase().includes(searchQuery.toLowerCase())
-    ).map(s => ({ ...s, match: "N/A" }));
+    return realSchemes
+      .filter(scheme => 
+        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        scheme.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .map(s => ({ ...s, match: "N/A" }));
   }, [searchQuery, aiResults]);
 
   return (
@@ -226,7 +228,6 @@ export default function SchemesPage() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Filters Panel */}
         <aside className="w-full lg:w-72 space-y-6 shrink-0">
           <Card className="border-none shadow-sm sticky top-24">
             <CardHeader className="pb-4">
@@ -271,60 +272,17 @@ export default function SchemesPage() {
                 <Slider defaultValue={[profile?.income || 5]} max={15} step={0.5} className="py-2" />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">State</Label>
-                <Select defaultValue={profile?.state?.toLowerCase() || "all"}>
-                  <SelectTrigger className="bg-muted/50 border-none h-10">
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All of India</SelectItem>
-                    <SelectItem value="maharashtra">Maharashtra</SelectItem>
-                    <SelectItem value="karnataka">Karnataka</SelectItem>
-                    <SelectItem value="tamil nadu">Tamil Nadu</SelectItem>
-                    <SelectItem value="delhi">Delhi</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <Button variant="outline" className="w-full border-dashed" onClick={() => { setSearchQuery(""); setAiResults(null); }}>Reset Filters</Button>
             </CardContent>
           </Card>
         </aside>
 
-        {/* Results */}
         <div className="flex-1 space-y-6">
           <div className="flex items-center justify-between bg-white dark:bg-card p-4 rounded-2xl shadow-sm border border-border/40">
             <p className="text-sm font-medium">
               Showing <span className="text-primary font-bold">{filteredSchemes.length}</span> {aiResults ? "AI-Matched" : "recommended"} schemes
             </p>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-muted-foreground uppercase">Sort:</span>
-              <Select defaultValue="match">
-                <SelectTrigger className="w-[140px] h-9 border-none bg-muted/50 font-semibold">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="match">Best Match</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="applied">Popularity</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
-
-          {aiResults && (
-            <Card className="border-none shadow-sm bg-primary/5 border border-primary/20">
-              <CardContent className="py-4 flex items-center gap-3">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Bot className="h-5 w-5 text-primary" />
-                </div>
-                <p className="text-sm font-medium text-primary">
-                  AI has prioritized these schemes based on your profile details (Income: ₹{profile?.income}L, Occupation: {profile?.occupation}, State: {profile?.state}).
-                </p>
-              </CardContent>
-            </Card>
-          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {filteredSchemes.map((scheme) => (
@@ -364,11 +322,6 @@ export default function SchemesPage() {
                       </p>
                     </div>
                   )}
-
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-[10px] bg-slate-50 border-slate-200">{scheme.type}</Badge>
-                    <Badge variant="outline" className="text-[10px] bg-slate-50 border-slate-200">Active</Badge>
-                  </div>
                 </CardContent>
                 <CardFooter className="flex gap-2 pt-4 pb-6 px-6 border-t border-border/30 mt-auto bg-slate-50/50 dark:bg-muted/10">
                   <Button asChild className="flex-1 shadow-sm font-bold">
@@ -391,18 +344,6 @@ export default function SchemesPage() {
               <p className="text-muted-foreground mt-2">Try adjusting your filters or search query.</p>
             </div>
           )}
-
-          <div className="flex justify-center pt-10">
-            <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl shadow-sm border border-border/40">
-              <Button variant="ghost" size="sm" className="w-9 h-9 font-bold" disabled>Prev</Button>
-              {[1, 2, 3, "...", 12].map((p, i) => (
-                <Button key={i} variant={p === 1 ? "default" : "ghost"} size="sm" className={`w-9 h-9 font-bold ${p === 1 ? 'shadow-md shadow-primary/20' : ''}`}>
-                  {p}
-                </Button>
-              ))}
-              <Button variant="ghost" size="sm" className="w-9 h-9 font-bold">Next</Button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
