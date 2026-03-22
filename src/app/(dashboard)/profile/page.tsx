@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useMemo, useEffect } from "react";
 import { useAuth, useFirestore, useDoc } from "@/firebase";
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                 <Input 
                   type="number" 
                   value={formData.age || ""} 
-                  onChange={(e) => handleUpdate("age", parseInt(e.target.value))} 
+                  onChange={(e) => handleUpdate("age", parseInt(e.target.value) || 0)} 
                   className="bg-muted/50 border-none h-11" 
                 />
               </div>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
               <Input 
                 type="number" 
                 value={formData.familySize || ""} 
-                onChange={(e) => handleUpdate("familySize", parseInt(e.target.value))} 
+                onChange={(e) => handleUpdate("familySize", parseInt(e.target.value) || 0)} 
                 className="bg-muted/50 border-none h-11" 
               />
             </div>

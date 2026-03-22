@@ -1,7 +1,7 @@
 'use server';
 /**
  * @fileOverview A Genkit flow for a multilingual AI assistant that helps Indian citizens
- * with government schemes, personal finances, and policy explanations, responding in the user's preferred language.
+ * with government schemes, personal finances, and policy explanations.
  *
  * - multilingualChat - The main function to interact with the AI assistant.
  * - MultilingualChatInput - The input type for the multilingualChat function.
@@ -12,80 +12,56 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { MessageData } from 'genkit/types';
 
-/**
- * Zod schema for a single chat message in the conversation history.
- */
 const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'model']).describe('The role of the message sender (user or AI model).'),
+  role: z.enum(['user', 'model']).describe('The role of the message sender.'),
   content: z.string().describe('The textual content of the message.'),
 });
 
-/**
- * Zod schema for recent financial transactions to provide context to the AI.
- */
 const TransactionContextSchema = z.object({
   amount: z.number().describe('The amount of the transaction.'),
-  category: z.string().describe('The category of the transaction (e.g., Food, Transport).'),
+  category: z.string().describe('The category of the transaction.'),
   type: z.enum(['income', 'expense']).describe('The type of transaction.'),
-  note: z.string().describe('A short description of the transaction.'),
-  date: z.string().describe('The date of the transaction in YYYY-MM-DD format.'),
+  note: z.string().describe('A short description.'),
+  date: z.string().describe('The date in YYYY-MM-DD format.'),
 });
 
-/**
- * Zod schema for saved schemes to provide context to the AI.
- */
 const SavedSchemeContextSchema = z.object({
-  schemeId: z.string().describe('The unique ID of the saved scheme.'),
-  name: z.string().describe('The name of the saved scheme.'),
-  ministry: z.string().describe('The ministry responsible for the scheme.'),
-  category: z.string().describe('The category of the scheme (e.g., Education, Health).'),
-  briefDescription: z.string().optional().describe('A brief description of the scheme.'),
+  schemeId: z.string(),
+  name: z.string(),
+  ministry: z.string(),
+  category: z.string(),
+  briefDescription: z.string().optional(),
 });
 
-/**
- * Zod schema for the user's profile information.
- */
 const UserProfileSchema = z.object({
-  name: z.string().describe("User's full name."),
-  state: z.string().describe("User's state of residence in India."),
-  age: z.number().describe("User's age."),
-  income: z.number().describe("User's annual income."),
-  occupation: z.string().optional().describe("User's occupation."),
-  casteCategory: z.string().optional().describe("User's caste category (e.g., SC, ST, OBC, General). "),
-  gender: z.string().optional().describe("User's gender."),
-  familySize: z.number().optional().describe("Number of people in user's family."),
-  disability: z.string().optional().describe("User's disability status (e.g., 'none', 'physical', 'visual')."),
-  language: z.string().optional().describe("User's preferred language in profile, primarily for static UI strings."),
+  name: z.string(),
+  state: z.string(),
+  age: z.number(),
+  income: z.number(),
+  occupation: z.string().optional(),
+  casteCategory: z.string().optional(),
+  gender: z.string().optional(),
+  familySize: z.number().optional(),
+  disability: z.string().optional(),
+  language: z.string().optional(),
 });
 
-/**
- * Input schema for the multilingualChat Genkit flow.
- */
 const MultilingualChatInputSchema = z.object({
-  messages: z.array(ChatMessageSchema).describe('Conversation history with the AI assistant.'),
-  userProfile: UserProfileSchema.describe('The current user\'s detailed profile information.'),
-  targetLanguage: z.string().describe('The language in which the AI assistant should respond (e.g., "English", "Hindi", "Marathi", "Tamil", "Telugu", "Bengali", "Gujarati").'),
-  recentTransactions: z.array(TransactionContextSchema).optional().describe('A list of recent financial transactions for contextual understanding.'),
-  savedSchemes: z.array(SavedSchemeContextSchema).optional().describe('A list of schemes the user has saved or expressed interest in for context.'),
+  messages: z.array(ChatMessageSchema),
+  userProfile: UserProfileSchema,
+  targetLanguage: z.string(),
+  recentTransactions: z.array(TransactionContextSchema).optional(),
+  savedSchemes: z.array(SavedSchemeContextSchema).optional(),
 });
 export type MultilingualChatInput = z.infer<typeof MultilingualChatInputSchema>;
 
-/**
- * Output schema for the multilingualChat Genkit flow.
- */
-const MultilingualChatOutputSchema = z.string().describe('The AI assistant\'s complete response in the target language.');
+const MultilingualChatOutputSchema = z.string();
 export type MultilingualChatOutput = z.infer<typeof MultilingualChatOutputSchema>;
 
-/**
- * Exports the multilingualChat function, which serves as a wrapper around the Genkit flow.
- */
 export async function multilingualChat(input: MultilingualChatInput): Promise<MultilingualChatOutput> {
   return multilingualChatFlow(input);
 }
 
-/**
- * Defines the Genkit flow for the multilingual AI assistant.
- */
 const multilingualChatFlow = ai.defineFlow(
   {
     name: 'multilingualChatFlow',
@@ -95,12 +71,19 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    // Consolidate all context into a single system instruction to satisfy Gemini requirements
-    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. 
-Always respond in ${targetLanguage}. Be empathetic, clear, and helpful. Use the provided context to give highly personalized answers.
+    // Consolidate all system context into ONE system instruction at the very beginning
+    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances.
+Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.
 
 USER PROFILE:
-${JSON.stringify(userProfile, null, 2)}`;
+- Name: ${userProfile.name}
+- State: ${userProfile.state}
+- Age: ${userProfile.age}
+- Income: ${userProfile.income} LPA
+- Occupation: ${userProfile.occupation || 'N/A'}
+- Gender: ${userProfile.gender || 'N/A'}
+- Social Category: ${userProfile.casteCategory || 'General'}
+- Disability: ${userProfile.disability || 'None'}`;
 
     if (recentTransactions && recentTransactions.length > 0) {
       systemInstruction += `\n\nRECENT TRANSACTIONS:\n${JSON.stringify(recentTransactions, null, 2)}`;
@@ -112,13 +95,13 @@ ${JSON.stringify(userProfile, null, 2)}`;
 
     const combinedMessages: MessageData[] = [];
 
-    // System message MUST be in the first position
+    // System instruction MUST be the first message
     combinedMessages.push({
       role: 'system',
       content: [{ text: systemInstruction }],
     });
 
-    // Add remaining chat history
+    // Add conversation history
     messages.forEach(m => {
       combinedMessages.push({
         role: m.role as any,

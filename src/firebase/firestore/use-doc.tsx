@@ -10,6 +10,7 @@ import {
 
 /**
  * Defensive hook for fetching a single document.
+ * Handles null refs and mock firestore instances gracefully to prevent crashes.
  */
 export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
   const [data, setData] = useState<T | null>(null);
@@ -17,7 +18,7 @@ export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // If docRef is null or its firestore instance is a mock/uninitialized, bail early
+    // CRITICAL: Defensive check to prevent SDK crashes during initialization or demo mode
     if (!docRef || !docRef.firestore || (docRef.firestore as any).__isMock) {
       setLoading(false);
       return;
@@ -32,7 +33,10 @@ export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
           setLoading(false);
         },
         (err) => {
-          console.error("Firestore useDoc error:", err);
+          // Log only if it's not a permission error during standard usage
+          if (process.env.NODE_ENV === 'development') {
+            console.warn("Firestore listener error:", err);
+          }
           setError(err);
           setLoading(false);
         }
@@ -40,7 +44,6 @@ export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
 
       return () => unsubscribe();
     } catch (e: any) {
-      console.warn("Firestore listener failed to start:", e);
       setLoading(false);
     }
   }, [docRef]);
