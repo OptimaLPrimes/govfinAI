@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -8,20 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Search, Filter, Sparkles, ArrowRight, Loader2, Building2 } from "lucide-react";
+import { Search, Filter, Sparkles, ArrowRight, Loader2, Building2, Bookmark } from "lucide-react";
 import Link from "next/link";
 import { useAuth, useFirestore, useDoc } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { UserProfile } from "@/lib/types";
 import { schemeEligibility, SchemeEligibilityOutput } from "@/genkit-flows/schemeEligibility";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const categories = ["Agriculture", "Education", "Health", "Housing", "Women & Child", "Employment", "Pension", "Business"];
 
@@ -33,10 +27,7 @@ const realSchemes = [
     category: "Agriculture",
     description: "Direct financial assistance of ₹6,000 per year provided in three equal installments to all landholding farmer families.",
     type: "Central Sector",
-    eligibilityCriteria: {
-      occupation: "Farmer",
-      income: "Small/Marginal farmers",
-    }
+    eligibilityCriteria: { occupation: "Farmer", income: "Small/Marginal farmers" }
   },
   {
     id: "pmjay",
@@ -45,9 +36,7 @@ const realSchemes = [
     category: "Health",
     description: "Providing health coverage of up to ₹5 lakh per family per year for secondary and tertiary care hospitalization to over 12 crore poor families.",
     type: "Health Insurance",
-    eligibilityCriteria: {
-      income: "Low income families",
-    }
+    eligibilityCriteria: { income: "Low income families" }
   },
   {
     id: "pmay",
@@ -56,9 +45,7 @@ const realSchemes = [
     category: "Housing",
     description: "Aims to provide 'Housing for All' by providing central assistance to implementing agencies for constructing houses for eligible families.",
     type: "Housing Support",
-    eligibilityCriteria: {
-      income: "EWS/LIG categories",
-    }
+    eligibilityCriteria: { income: "EWS/LIG categories" }
   },
   {
     id: "ssy",
@@ -67,9 +54,7 @@ const realSchemes = [
     category: "Women & Child",
     description: "A high-interest savings scheme for the girl child, offering tax benefits and financial security for education and marriage.",
     type: "Savings Scheme",
-    eligibilityCriteria: {
-      gender: "Female (child)",
-    }
+    eligibilityCriteria: { gender: "Female (child)" }
   },
   {
     id: "pmmy",
@@ -78,9 +63,7 @@ const realSchemes = [
     category: "Business",
     description: "Loans up to ₹10 lakh provided to non-corporate, non-farm small/micro enterprises for generating employment and income.",
     type: "Business Loan",
-    eligibilityCriteria: {
-      occupation: "Small business owner/Entrepreneur",
-    }
+    eligibilityCriteria: { occupation: "Small business owner/Entrepreneur" }
   },
   {
     id: "apy",
@@ -89,9 +72,7 @@ const realSchemes = [
     category: "Pension",
     description: "Social security scheme for unorganized sector workers, providing a guaranteed minimum pension of ₹1,000 to ₹5,000 after reaching 60.",
     type: "Social Security",
-    eligibilityCriteria: {
-      age: "18-40 years",
-    }
+    eligibilityCriteria: { age: "18-40 years" }
   },
   {
     id: "pmjdy",
@@ -109,9 +90,16 @@ const realSchemes = [
     category: "Agriculture",
     description: "Comprehensive crop insurance scheme providing financial support to farmers suffering crop loss/damage due to unforeseen events.",
     type: "Crop Insurance",
-    eligibilityCriteria: {
-      occupation: "Farmer",
-    }
+    eligibilityCriteria: { occupation: "Farmer" }
+  },
+  {
+    id: "pmsvanidhi",
+    name: "PM SVANidhi",
+    ministry: "Ministry of Housing & Urban Affairs",
+    category: "Business",
+    description: "A special micro-credit facility for street vendors to access affordable working capital loans for business resumption.",
+    type: "Micro Loan",
+    eligibilityCriteria: { occupation: "Street Vendor" }
   }
 ];
 
@@ -122,20 +110,40 @@ export default function SchemesPage() {
   
   const [isAiMatching, setIsAiMatching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [incomeLimit, setIncomeLimit] = useState<number>(15);
   const [aiResults, setAiResults] = useState<SchemeEligibilityOutput | null>(null);
+  const [savedSchemes, setSavedSchemes] = useState<string[]>([]);
 
   const userProfileRef = useMemo(() => {
-    // Defensive: ensure db is valid Firestore before calling doc()
     if (!auth.currentUser || !db || (db as any).__isMock) return null;
     try {
       return doc(db, "users", auth.currentUser.uid);
     } catch (e) {
-      console.warn("Failed to create doc reference:", e);
       return null;
     }
   }, [auth.currentUser, db]);
 
   const { data: profile } = useDoc<UserProfile>(userProfileRef);
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
+
+  const toggleSaveScheme = (id: string) => {
+    setSavedSchemes(prev => {
+      const isSaved = prev.includes(id);
+      if (isSaved) {
+        toast({ title: "Removed", description: "Scheme removed from your list." });
+        return prev.filter(sId => sId !== id);
+      } else {
+        toast({ title: "Saved!", description: "Scheme added to your saved list." });
+        return [...prev, id];
+      }
+    });
+  };
 
   const handleAiMatch = async () => {
     setIsAiMatching(true);
@@ -161,26 +169,18 @@ export default function SchemesPage() {
         })),
       });
       setAiResults(results);
-      toast({
-        title: "AI Analysis Complete",
-        description: `Found ${results.length} highly relevant schemes for you.`,
-      });
+      toast({ title: "AI Analysis Complete", description: `Found ${results.length} highly relevant schemes.` });
     } catch (error) {
-      console.error("AI Match Error:", error);
-      toast({
-        variant: "destructive",
-        title: "AI Analysis Failed",
-        description: "Could not perform auto-matching at this time.",
-      });
+      console.error(error);
+      toast({ variant: "destructive", title: "AI Match Failed", description: "Could not perform auto-matching." });
     } finally {
       setIsAiMatching(false);
     }
   };
 
   const filteredSchemes = useMemo(() => {
-    if (aiResults && aiResults.length > 0) {
-      return aiResults
-        .map(res => {
+    let baseList = aiResults && aiResults.length > 0
+      ? aiResults.map(res => {
           const original = realSchemes.find(s => s.id === res.schemeId);
           if (!original) return null;
           return {
@@ -189,17 +189,16 @@ export default function SchemesPage() {
             aiReason: res.matchReason,
             missing: res.missingCriteria,
           };
-        })
-        .filter((s): s is NonNullable<typeof s> => s !== null);
-    }
+        }).filter((s): s is NonNullable<typeof s> => s !== null)
+      : realSchemes.map(s => ({ ...s, match: "N/A" }));
 
-    return realSchemes
-      .filter(scheme => 
-        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        scheme.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      .map(s => ({ ...s, match: "N/A" }));
-  }, [searchQuery, aiResults]);
+    return baseList.filter(scheme => {
+      const matchesSearch = scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          scheme.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(scheme.category);
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, aiResults, selectedCategories]);
 
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
@@ -216,7 +215,7 @@ export default function SchemesPage() {
           )}
           <Button size="lg" className="indigo-gradient hover:opacity-90 shadow-lg shadow-primary/20" onClick={handleAiMatch} disabled={isAiMatching}>
             {isAiMatching ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing Profile...</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" /> AI Auto-Match</>
             )}
@@ -252,7 +251,12 @@ export default function SchemesPage() {
                 <div className="grid grid-cols-1 gap-2.5">
                   {categories.map((cat) => (
                     <div key={cat} className="flex items-center space-x-2.5">
-                      <Checkbox id={cat} className="rounded-md" />
+                      <Checkbox 
+                        id={cat} 
+                        checked={selectedCategories.includes(cat)}
+                        onCheckedChange={() => toggleCategory(cat)}
+                        className="rounded-md" 
+                      />
                       <label htmlFor={cat} className="text-sm font-medium leading-none cursor-pointer hover:text-primary transition-colors">
                         {cat}
                       </label>
@@ -263,13 +267,19 @@ export default function SchemesPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Annual Income (LPA)</Label>
-                  <span className="text-xs font-bold text-primary">₹{profile?.income || 5}L</span>
+                  <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Income Limit</Label>
+                  <span className="text-xs font-bold text-primary">₹{incomeLimit}L</span>
                 </div>
-                <Slider defaultValue={[profile?.income || 5]} max={15} step={0.5} className="py-2" />
+                <Slider 
+                  value={[incomeLimit]} 
+                  onValueChange={(v) => setIncomeLimit(v[0])} 
+                  max={25} 
+                  step={0.5} 
+                  className="py-2" 
+                />
               </div>
 
-              <Button variant="outline" className="w-full border-dashed" onClick={() => { setSearchQuery(""); setAiResults(null); }}>Reset Filters</Button>
+              <Button variant="outline" className="w-full border-dashed" onClick={() => { setSearchQuery(""); setAiResults(null); setSelectedCategories([]); }}>Reset Filters</Button>
             </CardContent>
           </Card>
         </aside>
@@ -284,10 +294,21 @@ export default function SchemesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {filteredSchemes.map((scheme) => (
               <Card key={scheme.id} className="group border-none shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden relative border border-border/50">
-                <div className="absolute top-4 right-4 z-10">
-                  <Badge className={`font-bold px-3 py-1 ${scheme.match !== "N/A" ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-500'}`}>
+                <div className="absolute top-4 right-4 z-10 flex gap-2">
+                  <Badge className={`font-bold px-3 py-1 ${scheme.match !== "N/A" ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/30' : 'bg-slate-50 text-slate-500 dark:bg-slate-900/30'}`}>
                     {scheme.match} Match
                   </Badge>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn(
+                      "h-8 w-8 rounded-full transition-all",
+                      savedSchemes.includes(scheme.id) ? "text-primary bg-primary/10" : "text-muted-foreground bg-background/50 hover:bg-background"
+                    )}
+                    onClick={(e) => { e.preventDefault(); toggleSaveScheme(scheme.id); }}
+                  >
+                    <Bookmark className={cn("h-4 w-4", savedSchemes.includes(scheme.id) && "fill-current")} />
+                  </Button>
                 </div>
                 <CardHeader className="pb-2">
                   <div className="flex flex-col gap-2">
@@ -333,7 +354,7 @@ export default function SchemesPage() {
           </div>
 
           {filteredSchemes.length === 0 && (
-            <div className="text-center py-20">
+            <div className="text-center py-20 animate-in fade-in zoom-in-95">
               <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
