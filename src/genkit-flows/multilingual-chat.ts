@@ -73,7 +73,7 @@ export type MultilingualChatInput = z.infer<typeof MultilingualChatInputSchema>;
 /**
  * Output schema for the multilingualChat Genkit flow.
  */
-const MultilingualChatOutputSchema = z.string().describe('The AI assistant\'s complete streaming response in the target language.');
+const MultilingualChatOutputSchema = z.string().describe('The AI assistant\'s complete response in the target language.');
 export type MultilingualChatOutput = z.infer<typeof MultilingualChatOutputSchema>;
 
 /**
@@ -95,7 +95,7 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    const systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.`;
+    const systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. Always respond in ${targetLanguage}. Be empathetic, clear, and helpful. Use the provided context (profile, transactions) to give highly personalized answers.`;
 
     const contextMessages: MessageData[] = [];
 
@@ -144,7 +144,7 @@ const multilingualChatFlow = ai.defineFlow(
     // Combine all context and chat history messages
     const combinedMessages: MessageData[] = [...contextMessages, ...chatHistoryMessages];
 
-    const { stream, response } = ai.generateStream({
+    const { response } = await ai.generate({
       model: 'googleai/gemini-1.5-pro',
       messages: combinedMessages,
       config: {
@@ -152,14 +152,6 @@ const multilingualChatFlow = ai.defineFlow(
       },
     });
 
-    let fullResponse = '';
-    for await (const chunk of stream) {
-      if (chunk.text) {
-        fullResponse += chunk.text;
-      }
-    }
-    await response;
-
-    return fullResponse;
+    return response.text;
   }
 );
