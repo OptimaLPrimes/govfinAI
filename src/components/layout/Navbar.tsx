@@ -66,8 +66,13 @@ export function Navbar() {
   };
 
   const userProfileRef = useMemo(() => {
-    if (!user) return null;
-    return doc(db, "users", user.uid);
+    // CRITICAL FIX: Guard against mock Firestore instances to prevent runtime crash
+    if (!user || !db || (db as any).__isMock) return null;
+    try {
+      return doc(db, "users", user.uid);
+    } catch (e) {
+      return null;
+    }
   }, [user, db]);
 
   const { data: userProfile } = useDoc<UserProfile>(userProfileRef);

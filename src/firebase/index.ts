@@ -44,7 +44,7 @@ export function initializeFirebase(): { app: FirebaseApp; db: Firestore; auth: A
     } else {
       console.warn("Firebase configuration is missing or invalid. Running in demo mode.");
       app = { options: {} } as any;
-      // We set a marker on the db object so hooks know it's a mock and don't call real Firestore SDK functions on it
+      // Marker on the db object so hooks and components know it's a mock
       db = { __isMock: true, type: 'firestore', _databaseId: { projectId: 'demo' } } as any;
       auth = { app, currentUser: mockUser } as any;
     }
