@@ -11,14 +11,12 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 // 1. Define the schema for a single scheme as it would be passed to the AI for evaluation.
-// This structure reflects the kind of information the AI needs to assess eligibility.
 const SchemeDetailsForEvaluationSchema = z.object({
   id: z.string().describe('Unique ID of the scheme.'),
   name: z.string().describe('Name of the government welfare scheme.'),
   ministry: z.string().describe('The ministry or department managing the scheme.'),
   category: z.string().describe('The category of the scheme (e.g., Agriculture, Education, Health).'),
   description: z.string().describe('A brief description of the scheme.'),
-  // Eligibility criteria are represented as strings that Gemini can interpret.
   eligibilityCriteria: z.object({
     age: z.string().optional().describe('Age criteria, e.g., "18-60 years", "above 65", "below 18".'),
     income: z.string().optional().describe('Income criteria, e.g., "below 2.5 LPA", "no income limit".'),
@@ -28,7 +26,6 @@ const SchemeDetailsForEvaluationSchema = z.object({
     occupation: z.string().optional().describe('Occupation-specific eligibility, e.g., "Farmer", "Student", "Unemployed".'),
     familySize: z.string().optional().describe('Family size criteria, e.g., "single parent", "family with 2 children".'),
     disabilityStatus: z.string().optional().describe('Disability status criteria, e.g., "Must be a person with disability", "No disability required".'),
-    // Add other relevant eligibility criteria as needed from the full scheme document.
   }).optional().describe('Detailed eligibility conditions for the scheme as natural language strings.'),
 });
 
@@ -67,7 +64,7 @@ const schemeEligibilityPrompt = ai.definePrompt({
   name: 'schemeEligibilityPrompt',
   input: { schema: SchemeEligibilityInputSchema },
   output: { schema: SchemeEligibilityOutputSchema },
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-flash',
   prompt: `You are an expert Government Financial Inclusion Assistant named GovFinAI. Your task is to evaluate a user's eligibility for various government welfare schemes based on their personal profile.
 
 User Profile:
@@ -114,9 +111,6 @@ const schemeEligibilityFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await schemeEligibilityPrompt(input);
-
-    // The prompt instructs the model to return the top 10 sorted by matchScore.
-    // This step acts as a safeguard to ensure the output is correctly sorted and limited.
     const sortedAndSlicedOutput = output
       ?.sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, 10) || [];

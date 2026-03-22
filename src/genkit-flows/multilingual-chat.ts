@@ -127,7 +127,7 @@ ${JSON.stringify(userProfile, null, 2)}`;
     });
 
     const { response } = await ai.generate({
-      model: 'googleai/gemini-1.5-pro',
+      model: 'googleai/gemini-1.5-flash',
       messages: combinedMessages,
       config: {
         temperature: 0.7,
