@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bot, Send, User, Mic, Copy, ThumbsUp, ThumbsDown, Sparkles, Loader2 } from "lucide-react";
+import { Bot, Send, User, Mic, Copy, ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type Message = {
@@ -27,7 +27,6 @@ const suggestedPrompts = [
   "Which schemes am I eligible for?",
   "Summarize my spending this month",
   "Explain PM Kisan Yojana in simple terms",
-  "How can I save more money?",
 ];
 
 export default function AssistantPage() {
@@ -47,7 +46,6 @@ export default function AssistantPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Initialize first message timestamp after hydration to avoid mismatch
     setMessages(prev => prev.map(m => m.id === "1" ? { ...m, timestamp: new Date() } : m));
   }, []);
 
@@ -71,7 +69,6 @@ export default function AssistantPage() {
     setInput("");
     setIsLoading(true);
 
-    // Simulation of AI Response
     setTimeout(() => {
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -100,27 +97,25 @@ export default function AssistantPage() {
           <p className="text-sm text-muted-foreground">Your multilingual guide to government & finance</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground hidden sm:inline">Preferred Language:</span>
           <Select defaultValue="en">
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="en">English</SelectItem>
               <SelectItem value="hi">Hindi</SelectItem>
               <SelectItem value="mr">Marathi</SelectItem>
-              <SelectItem value="ta">Tamil</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Card className="flex-1 flex flex-col min-h-0 border-none shadow-sm bg-slate-50/50">
+      <Card className="flex-1 flex flex-col min-h-0 border-none shadow-sm bg-slate-50/50 dark:bg-muted/5">
         <ScrollArea className="flex-1 p-4 md:p-6" ref={scrollRef}>
           <div className="space-y-6 max-w-4xl mx-auto">
             {messages.map((m) => (
               <div key={m.id} className={`flex gap-3 md:gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <Avatar className={`h-8 w-8 md:h-10 md:w-10 shadow-sm ${m.role === 'assistant' ? 'bg-primary' : 'bg-slate-200'}`}>
+                <Avatar className={`h-8 w-8 md:h-10 md:w-10 shadow-sm ${m.role === 'assistant' ? 'bg-primary' : 'bg-muted'}`}>
                   {m.role === 'assistant' ? (
                     <AvatarFallback className="bg-primary text-white"><Bot className="h-5 w-5 md:h-6 md:w-6" /></AvatarFallback>
                   ) : (
@@ -131,7 +126,7 @@ export default function AssistantPage() {
                   <div className={`p-3 md:p-4 rounded-2xl shadow-sm ${
                     m.role === 'user' 
                     ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                    : 'bg-white text-foreground rounded-tl-none'
+                    : 'bg-white dark:bg-card text-foreground rounded-tl-none border border-border/50'
                   }`}>
                     <p className="text-sm md:text-base leading-relaxed">{m.content}</p>
                   </div>
@@ -155,7 +150,7 @@ export default function AssistantPage() {
                 <Avatar className="h-10 w-10 bg-primary shadow-sm">
                   <AvatarFallback className="bg-primary text-white"><Bot className="h-6 w-6" /></AvatarFallback>
                 </Avatar>
-                <div className="p-4 rounded-2xl bg-white shadow-sm rounded-tl-none flex items-center gap-2">
+                <div className="p-4 rounded-2xl bg-white dark:bg-card shadow-sm border border-border/50 rounded-tl-none flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-muted-foreground italic">GovFinAI is thinking...</span>
                 </div>
@@ -164,7 +159,7 @@ export default function AssistantPage() {
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t bg-white">
+        <div className="p-4 border-t bg-white dark:bg-card">
           <div className="max-w-4xl mx-auto space-y-4">
             <div className="flex flex-wrap gap-2">
               {suggestedPrompts.map((prompt) => (
@@ -172,7 +167,7 @@ export default function AssistantPage() {
                   key={prompt} 
                   variant="outline" 
                   size="sm" 
-                  className="text-xs rounded-full hover:bg-primary/5 hover:text-primary hover:border-primary/30"
+                  className="text-xs rounded-full hover:bg-primary/5 hover:text-primary hover:border-primary/30 dark:hover:bg-primary/20"
                   onClick={() => handleSend(prompt)}
                 >
                   {prompt}
@@ -180,18 +175,18 @@ export default function AssistantPage() {
               ))}
             </div>
             <div className="flex gap-2 relative">
-              <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground">
+              <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:bg-muted">
                 <Mic className="h-5 w-5" />
               </Button>
               <Input 
                 placeholder="Ask me about schemes or your spending..." 
-                className="pr-12 py-6 rounded-xl"
+                className="pr-12 py-6 rounded-xl bg-background border-border/50 focus:ring-primary/30"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend(input)}
               />
               <Button 
-                className="absolute right-1 top-1 h-10 w-10 rounded-lg bg-primary hover:bg-primary/90"
+                className="absolute right-1 top-1 h-10 w-10 rounded-lg bg-primary hover:bg-primary/90 shadow-lg"
                 onClick={() => handleSend(input)}
                 disabled={!input.trim() || isLoading}
               >

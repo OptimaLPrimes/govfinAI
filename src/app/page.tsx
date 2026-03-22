@@ -11,15 +11,11 @@ import {
   Languages, 
   Search, 
   ArrowRight,
-  CheckCircle2,
   Moon,
   Sun
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
-/**
- * Landing page that links directly to the public dashboard.
- */
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -35,8 +31,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
-      {/* Navigation */}
-      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b">
+      <header className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
             <div className="w-8 h-8 rounded-lg indigo-gradient flex items-center justify-center text-white shadow-lg">G</div>
@@ -45,7 +40,6 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors">Features</Link>
             <Link href="#schemes" className="text-sm font-medium hover:text-primary transition-colors">Schemes</Link>
-            <Link href="#security" className="text-sm font-medium hover:text-primary transition-colors">Security</Link>
           </nav>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
@@ -59,12 +53,11 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1 pt-16">
-        {/* Hero Section */}
         <section className="relative py-20 lg:py-32 overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -z-10 rounded-l-[100px] hidden lg:block"></div>
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -z-10 rounded-l-[100px] hidden lg:block dark:bg-primary/10"></div>
           <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
-              <Badge className="bg-primary/10 text-primary border-none py-1.5 px-4 rounded-full">
+              <Badge className="bg-primary/10 text-primary border-none py-1.5 px-4 rounded-full dark:bg-primary/20">
                 <Sparkles className="mr-2 h-4 w-4" />
                 Empowering 1.4 Billion Citizens
               </Badge>
@@ -78,22 +71,24 @@ export default function LandingPage() {
                 <Button size="lg" asChild className="indigo-gradient h-14 px-8 text-lg rounded-xl shadow-xl shadow-primary/20 transition-all hover:translate-y-[-2px]">
                   <Link href="/dashboard">Launch Dashboard <ArrowRight className="ml-2 h-5 w-5" /></Link>
                 </Button>
-                <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-xl border-border bg-background" asChild>
+                <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-xl border-border bg-background hover:bg-muted" asChild>
                   <Link href="#features">Explore Features</Link>
                 </Button>
               </div>
             </div>
             <div className="relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-300">
-              <div className="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-30"></div>
-              <Image 
-                src="https://picsum.photos/seed/fintech/1200/800" 
-                width={1200} 
-                height={800} 
-                alt="Hero" 
-                className="rounded-3xl shadow-2xl relative z-10 border border-border/50"
-                data-ai-hint="financial technology"
-              />
-              <div className="absolute -bottom-6 -left-6 bg-card p-6 rounded-2xl shadow-xl z-20 hidden md:block border border-border animate-bounce-slow">
+              <div className="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-30 dark:opacity-20"></div>
+              <div className="relative z-10 p-2 bg-background/50 backdrop-blur-md border border-border/50 rounded-[2.5rem] shadow-2xl">
+                <Image 
+                  src="https://picsum.photos/seed/fintech/1200/800" 
+                  width={1200} 
+                  height={800} 
+                  alt="Hero" 
+                  className="rounded-[2rem] shadow-2xl"
+                  data-ai-hint="financial technology"
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-6 bg-card/80 backdrop-blur-md p-6 rounded-2xl shadow-xl z-20 hidden md:block border border-border animate-bounce-slow dark:bg-card/90">
                 <div className="flex items-center gap-3">
                   <div className="bg-accent/10 p-2 rounded-lg">
                     <TrendingUp className="h-6 w-6 text-accent" />
@@ -108,8 +103,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section id="features" className="py-24 bg-muted/30">
+        <section id="features" className="py-24 bg-muted/30 dark:bg-muted/10">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-20 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Everything you need for financial inclusion</h2>
@@ -137,8 +131,8 @@ export default function LandingPage() {
                   color: "bg-emerald-500"
                 }
               ].map((f, i) => (
-                <div key={i} className="bg-card p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all group border border-border hover:translate-y-[-4px] duration-300 animate-in fade-in slide-in-from-bottom-8" style={{ animationDelay: `${i * 150}ms` }}>
-                  <div className={`${f.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform`}>
+                <div key={i} className="bg-card/50 backdrop-blur-sm p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all group border border-border hover:translate-y-[-4px] duration-300 animate-in fade-in slide-in-from-bottom-8 dark:bg-card/20 dark:hover:border-primary/30" style={{ animationDelay: `${i * 150}ms` }}>
+                  <div className={`${f.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
                     <f.icon className="h-7 w-7" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4">{f.title}</h3>
@@ -148,32 +142,9 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* CTA Section */}
-        <section className="py-24">
-          <div className="container mx-auto px-4">
-            <div className="indigo-gradient rounded-[40px] p-12 lg:p-24 text-center text-white relative overflow-hidden shadow-2xl shadow-primary/30 animate-in zoom-in-95 duration-1000">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
-              
-              <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-                <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight">Ready to transform your financial future?</h2>
-                <p className="text-xl text-white/80">Join thousands of Indians who are already using AI to unlock their full financial potential.</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" variant="secondary" asChild className="h-16 px-10 text-xl font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform bg-white text-primary">
-                    <Link href="/dashboard">Access Dashboard</Link>
-                  </Button>
-                  <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-2xl border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20" asChild>
-                    <Link href="/assistant">Talk to Assistant</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className="py-12 border-t bg-muted/50">
+      <footer className="py-12 border-t bg-muted/50 dark:bg-muted/5 border-border/50">
         <div className="container mx-auto px-4">
           <div className="pt-8 text-center text-xs text-muted-foreground font-medium">
             © {new Date().getFullYear()} GovFinAI Assistant. All rights reserved.
