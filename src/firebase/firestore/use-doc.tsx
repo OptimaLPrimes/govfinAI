@@ -17,8 +17,8 @@ export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // If docRef is null or its firestore instance is uninitialized, bail early
-    if (!docRef || !docRef.firestore || Object.keys(docRef.firestore).length === 0) {
+    // If docRef is null or its firestore instance is a mock/uninitialized, bail early
+    if (!docRef || !docRef.firestore || (docRef.firestore as any).__isMock) {
       setLoading(false);
       return;
     }

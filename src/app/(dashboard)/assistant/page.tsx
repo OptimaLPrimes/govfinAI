@@ -47,7 +47,7 @@ export default function AssistantPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Initialize first message timestamp after hydration
+    // Initialize first message timestamp after hydration to avoid mismatch
     setMessages(prev => prev.map(m => m.id === "1" ? { ...m, timestamp: new Date() } : m));
   }, []);
 

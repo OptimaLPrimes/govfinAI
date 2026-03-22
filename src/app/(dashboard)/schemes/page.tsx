@@ -125,7 +125,8 @@ export default function SchemesPage() {
   const [aiResults, setAiResults] = useState<SchemeEligibilityOutput | null>(null);
 
   const userProfileRef = useMemo(() => {
-    if (!auth.currentUser || !db || !db.type) return null;
+    // Defensive: ensure db is valid Firestore before calling doc()
+    if (!auth.currentUser || !db || (db as any).__isMock) return null;
     try {
       return doc(db, "users", auth.currentUser.uid);
     } catch (e) {

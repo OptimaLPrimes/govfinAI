@@ -50,7 +50,8 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   
   const userProfileRef = useMemo(() => {
-    if (!auth.currentUser || !db || !db.type) return null;
+    // Crucial: check if db is a real Firestore instance before calling doc()
+    if (!auth.currentUser || !db || (db as any).__isMock) return null;
     try {
       return doc(db, "users", auth.currentUser.uid);
     } catch (e) {
@@ -69,7 +70,7 @@ export default function DashboardPage() {
   const profileCompleteness = useMemo(() => {
     if (!profile) return 0;
     const fields = ['name', 'state', 'age', 'income', 'occupation', 'casteCategory', 'gender', 'familySize'];
-    const filledFields = fields.filter(field => !!profile[field as keyof UserProfile]);
+    const filledFields = fields.filter(field => !!(profile as any)[field]);
     return Math.round((filledFields.length / fields.length) * 100);
   }, [profile]);
 
