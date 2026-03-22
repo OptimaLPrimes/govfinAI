@@ -95,54 +95,36 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    const systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. Always respond in ${targetLanguage}. Be empathetic, clear, and helpful. Use the provided context (profile, transactions) to give highly personalized answers.`;
+    // Consolidate all context into a single system prompt string
+    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. 
+Always respond in ${targetLanguage}. Be empathetic, clear, and helpful. Use the provided context to give highly personalized answers.
 
-    const contextMessages: MessageData[] = [];
+USER PROFILE:
+${JSON.stringify(userProfile, null, 2)}`;
 
-    // Add system instruction as the first message
-    contextMessages.push({
-      role: 'system',
-      content: [{
-        text: systemInstruction
-      }],
-    });
-
-    // Add user profile as part of the context
-    contextMessages.push({
-      role: 'system',
-      content: [{
-        text: `User Profile: ${JSON.stringify(userProfile, null, 2)}`
-      }],
-    });
-
-    // Add recent transactions if available
     if (recentTransactions && recentTransactions.length > 0) {
-      contextMessages.push({
-        role: 'system',
-        content: [{
-          text: `Recent Transactions: ${JSON.stringify(recentTransactions, null, 2)}`
-        }],
-      });
+      systemInstruction += `\n\nRECENT TRANSACTIONS:\n${JSON.stringify(recentTransactions, null, 2)}`;
     }
 
-    // Add saved schemes if available
     if (savedSchemes && savedSchemes.length > 0) {
-      contextMessages.push({
-        role: 'system',
-        content: [{
-          text: `Saved Schemes (ID, Name, Ministry, Category, Brief Description):\n${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category})${s.briefDescription ? ` - ${s.briefDescription}` : ''}`).join('\n')}`
-        }],
-      });
+      systemInstruction += `\n\nSAVED SCHEMES (ID, Name, Ministry, Category):\n${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category})${s.briefDescription ? ` - ${s.briefDescription}` : ''}`).join('\n')}`;
     }
 
-    // Convert chat history messages to Genkit's MessageData format
-    const chatHistoryMessages: MessageData[] = messages.map(m => ({
-      role: m.role as any,
-      content: [{ text: m.content }]
-    }));
+    const combinedMessages: MessageData[] = [];
 
-    // Combine all context and chat history messages
-    const combinedMessages: MessageData[] = [...contextMessages, ...chatHistoryMessages];
+    // Add exactly ONE system instruction at the beginning
+    combinedMessages.push({
+      role: 'system',
+      content: [{ text: systemInstruction }],
+    });
+
+    // Add conversation history
+    messages.forEach(m => {
+      combinedMessages.push({
+        role: m.role as any,
+        content: [{ text: m.content }]
+      });
+    });
 
     const { response } = await ai.generate({
       model: 'googleai/gemini-1.5-pro',
