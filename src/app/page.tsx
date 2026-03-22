@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
+/**
+ * Landing page that links directly to the public dashboard.
+ */
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -48,11 +51,8 @@ export default function LandingPage() {
             <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
               {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
-            <Button variant="ghost" asChild className="hidden sm:flex">
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild className="indigo-gradient hover:opacity-90 transition-all hover:scale-105 active:scale-95">
-              <Link href="/login">Get Started</Link>
+            <Button asChild className="indigo-gradient hover:opacity-90 transition-all hover:scale-105 active:scale-95 px-6">
+              <Link href="/dashboard">Enter App</Link>
             </Button>
           </div>
         </div>
@@ -76,9 +76,9 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" asChild className="indigo-gradient h-14 px-8 text-lg rounded-xl shadow-xl shadow-primary/20 transition-all hover:translate-y-[-2px]">
-                  <Link href="/login">Start Your Journey <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                  <Link href="/dashboard">Launch Dashboard <ArrowRight className="ml-2 h-5 w-5" /></Link>
                 </Button>
-                <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-xl border-border bg-background">
+                <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-xl border-border bg-background" asChild>
                   <Link href="#features">Explore Features</Link>
                 </Button>
               </div>
@@ -149,38 +149,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Security Section */}
-        <section id="security" className="py-24 overflow-hidden">
-          <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-20 items-center">
-            <div className="order-2 lg:order-1 relative animate-in fade-in slide-in-from-left-8 duration-1000">
-              <Image 
-                src="https://picsum.photos/seed/benefits/600/400" 
-                width={600} 
-                height={400} 
-                alt="Security" 
-                className="rounded-3xl shadow-2xl border border-border"
-                data-ai-hint="social welfare"
-              />
-            </div>
-            <div className="order-1 lg:order-2 space-y-8 animate-in fade-in slide-in-from-right-8 duration-1000">
-              <div className="bg-accent/10 text-accent w-fit px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4" /> Trusted Security
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">Your data is safe, secure, and private.</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                We use bank-grade encryption and strictly adhere to Indian data privacy norms. Your financial data is only used to provide you with better insights and never shared without consent.
-              </p>
-              <ul className="space-y-4">
-                {["AES-256 Encryption", "Biometric Authentication Ready", "GDPR & Indian DPDP Compliant", "Zero-Knowledge Data Processing"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 font-medium text-foreground/80">
-                    <CheckCircle2 className="h-5 w-5 text-accent" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
         <section className="py-24">
           <div className="container mx-auto px-4">
@@ -193,9 +161,9 @@ export default function LandingPage() {
                 <p className="text-xl text-white/80">Join thousands of Indians who are already using AI to unlock their full financial potential.</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" variant="secondary" asChild className="h-16 px-10 text-xl font-bold rounded-2xl shadow-xl hover:scale-105 transition-transform bg-white text-primary">
-                    <Link href="/login">Create Free Account</Link>
+                    <Link href="/dashboard">Access Dashboard</Link>
                   </Button>
-                  <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-2xl border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20">
+                  <Button size="lg" className="h-16 px-10 text-xl font-bold rounded-2xl border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20" asChild>
                     <Link href="/assistant">Talk to Assistant</Link>
                   </Button>
                 </div>
@@ -205,43 +173,9 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="py-12 border-t bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div className="col-span-1 md:col-span-1 space-y-4">
-              <div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-                <div className="w-8 h-8 rounded-lg indigo-gradient flex items-center justify-center text-white">G</div>
-                <span>GovFinAI</span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Bridging the gap between technology and financial inclusion for the next billion users in India.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 uppercase text-xs tracking-widest text-muted-foreground">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground/80">
-                <li><Link href="/schemes" className="hover:text-primary transition-colors">Scheme Matching</Link></li>
-                <li><Link href="/finance" className="hover:text-primary transition-colors">Expense Tracking</Link></li>
-                <li><Link href="/assistant" className="hover:text-primary transition-colors">AI Assistant</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 uppercase text-xs tracking-widest text-muted-foreground">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground/80">
-                <li><Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 uppercase text-xs tracking-widest text-muted-foreground">Contact</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground/80">
-                <li>support@govfin.ai</li>
-                <li>Bengaluru, India</li>
-              </ul>
-            </div>
-          </div>
-          <div className="pt-8 border-t text-center text-xs text-muted-foreground font-medium">
+          <div className="pt-8 text-center text-xs text-muted-foreground font-medium">
             © {new Date().getFullYear()} GovFinAI Assistant. All rights reserved.
           </div>
         </div>

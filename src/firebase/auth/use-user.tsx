@@ -1,21 +1,20 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
 import { useAuth } from '../provider';
 
+/**
+ * Hook to access the current (mocked) user.
+ */
 export function useUser() {
   const auth = useAuth();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(auth.currentUser);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    // In the removed auth system, the user is static and always available
+    setUser(auth.currentUser);
+    setLoading(false);
   }, [auth]);
 
   return { user, loading };

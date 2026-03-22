@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
   Search, 
-  BookMarked, 
   BarChart3, 
   Bot, 
   User, 
@@ -16,11 +15,10 @@ import {
   ChevronDown,
   Menu,
   Moon,
-  Sun,
-  X
+  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -31,11 +29,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth, useFirestore, useDoc } from "@/firebase";
+import { useFirestore, useDoc, useUser } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { UserProfile } from "@/lib/types";
-import { useMemo } from "react";
-import { useRouter } from "next/navigation";
 
 const mainNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -53,8 +49,7 @@ const languages = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const auth = useAuth();
+  const { user } = useUser();
   const db = useFirestore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
@@ -71,17 +66,11 @@ export function Navbar() {
   };
 
   const userProfileRef = useMemo(() => {
-    if (!auth.currentUser) return null;
-    return doc(db, "users", auth.currentUser.uid);
-  }, [auth.currentUser, db]);
+    if (!user) return null;
+    return doc(db, "users", user.uid);
+  }, [user, db]);
 
   const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
-
-  const handleLogout = async () => {
-    localStorage.removeItem("demo_mode");
-    await auth.signOut();
-    router.push("/login");
-  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -103,7 +92,7 @@ export function Navbar() {
                   active ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:bg-muted"
                 )}>
                   <Link href={item.href} className="flex items-center gap-2">
-                    <item.icon className={cn("h-4 w-4 transition-transform duration-300", active ? "scale-110 text-primary" : "text-muted-foreground group-hover:scale-110")} />
+                    <item.icon className={cn("h-4 w-4 transition-transform duration-300", active ? "scale-110 text-primary" : "text-muted-foreground")} />
                     {item.name}
                   </Link>
                 </Button>
@@ -146,16 +135,16 @@ export function Navbar() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 shadow-sm border border-border group overflow-hidden">
                 <Avatar className="h-9 w-9 transition-transform duration-300 group-hover:scale-110">
-                  <AvatarImage src={`https://picsum.photos/seed/${userProfile?.uid || 'user'}/100/100`} />
-                  <AvatarFallback className="bg-primary text-white font-bold">{userProfile?.name?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarImage src={`https://picsum.photos/seed/${user?.uid || 'user'}/100/100`} />
+                  <AvatarFallback className="bg-primary text-white font-bold">{userProfile?.name?.charAt(0) || user?.displayName?.charAt(0) || "G"}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 mt-2 rounded-2xl animate-in slide-in-from-top-2 duration-300" align="end">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-bold">{userProfile?.name || "Gov User"}</p>
-                  <p className="text-xs text-muted-foreground truncate">{userProfile?.email || "user@example.com"}</p>
+                  <p className="text-sm font-bold">{userProfile?.name || user?.displayName || "Gov Visitor"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{userProfile?.email || user?.email || "visitor@govfin.ai"}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -168,10 +157,6 @@ export function Navbar() {
                 <Link href="/settings" className="flex items-center gap-2">
                   <Settings className="h-4 w-4" /> Settings
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-destructive font-bold rounded-lg m-1 cursor-pointer hover:bg-destructive/10">
-                Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -211,9 +196,6 @@ export function Navbar() {
                   <Button variant="outline" onClick={toggleDarkMode} className="w-full justify-start rounded-xl">
                     {isDarkMode ? <Sun className="mr-3 h-5 w-5" /> : <Moon className="mr-3 h-5 w-5" />}
                     {isDarkMode ? "Light Mode" : "Dark Mode"}
-                  </Button>
-                  <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-destructive hover:bg-destructive/10 rounded-xl">
-                    Logout
                   </Button>
                 </div>
               </div>
