@@ -6,35 +6,67 @@ import { getAuth, Auth } from 'firebase/auth';
 import { firebaseConfig } from './config';
 
 /**
- * Initializes Firebase and provides a mock Auth object to remove the authentication requirement.
+ * Initializes Firebase and provides a robust mock Auth object.
+ * Ensuring the app never crashes even if configuration is missing.
  */
 export function initializeFirebase(): { app: FirebaseApp; db: Firestore; auth: Auth } {
-  const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  let app: any;
+  let db: any;
   
-  // Mock Auth system to remove the requirement for actual login
+  try {
+    // Check if configuration is at least partially valid
+    const isValidConfig = firebaseConfig.projectId && firebaseConfig.projectId !== "undefined";
+    
+    if (isValidConfig) {
+      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+      db = getFirestore(app);
+    } else {
+      console.warn("Firebase Project ID is missing. Running in local-only demo mode.");
+      app = { options: {} } as any;
+      db = {} as any;
+    }
+  } catch (error) {
+    console.error("Firebase Services failed to initialize:", error);
+    app = { options: {} } as any;
+    db = {} as any;
+  }
+  
+  // Mock Auth system - Always present to prevent 'undefined' crashes
   const auth = {
     app,
     currentUser: {
       uid: 'public-demo-user',
       displayName: 'Gov Visitor',
       email: 'visitor@govfin.ai',
-      photoURL: 'https://picsum.photos/seed/visitor/100/100'
-    },
+      photoURL: 'https://picsum.photos/seed/visitor/100/100',
+      emailVerified: true,
+      isAnonymous: false,
+      metadata: {},
+      providerData: [],
+      refreshToken: '',
+      tenantId: null,
+      delete: async () => {},
+      getIdToken: async () => 'mock-token',
+      getIdTokenResult: async () => ({}) as any,
+      reload: async () => {},
+      toJSON: () => ({}),
+      phoneNumber: null,
+    } as any,
     onAuthStateChanged: (callback: (user: any) => void) => {
-      // Immediately notify the application that a "user" is always logged in
       callback({
         uid: 'public-demo-user',
         displayName: 'Gov Visitor',
         email: 'visitor@govfin.ai',
         photoURL: 'https://picsum.photos/seed/visitor/100/100'
       });
-      return () => {}; // Return no-op unsubscribe
+      return () => {}; 
     },
-    signOut: async () => {
-      console.log("Authentication is disabled. Sign out is a no-op.");
-      return Promise.resolve();
+    onIdTokenChanged: (callback: any) => {
+      callback({ uid: 'public-demo-user' });
+      return () => {};
     },
+    signOut: async () => Promise.resolve(),
+    authStateReady: async () => Promise.resolve(),
   } as unknown as Auth;
 
   return { app, db, auth };

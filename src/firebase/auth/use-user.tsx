@@ -5,6 +5,7 @@ import { useAuth } from '../provider';
 
 /**
  * Hook to access the current (mocked) user.
+ * Guaranteed to return a valid user object to support auth-free operation.
  */
 export function useUser() {
   const auth = useAuth();
@@ -12,8 +13,10 @@ export function useUser() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // In the removed auth system, the user is static and always available
-    setUser(auth.currentUser);
+    // In demo mode, the user is always available immediately
+    if (auth.currentUser) {
+      setUser(auth.currentUser);
+    }
     setLoading(false);
   }, [auth]);
 

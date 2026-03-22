@@ -155,7 +155,7 @@ ${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category
 
     let fullResponse = '';
     for await (const chunk of stream) {
-      if (chunk.content) {
+      if (chunk.text) {
         fullResponse += chunk.text;
       }
     }
