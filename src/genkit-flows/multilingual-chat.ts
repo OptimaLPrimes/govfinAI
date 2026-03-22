@@ -1,11 +1,8 @@
+
 'use server';
 /**
  * @fileOverview A Genkit flow for a multilingual AI assistant that helps Indian citizens
  * with government schemes, personal finances, and policy explanations.
- *
- * - multilingualChat - The main function to interact with the AI assistant.
- * - MultilingualChatInput - The input type for the multilingualChat function.
- * - MultilingualChatOutput - The return type for the multilingualChat function.
  */
 
 import { ai } from '@/ai/genkit';
@@ -95,7 +92,7 @@ USER PROFILE:
 
     const combinedMessages: MessageData[] = [];
 
-    // System instruction MUST be the first message
+    // System instruction MUST be the first message and the only one with 'system' role
     combinedMessages.push({
       role: 'system',
       content: [{ text: systemInstruction }],

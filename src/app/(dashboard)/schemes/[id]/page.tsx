@@ -1,3 +1,4 @@
+
 "use client";
 
 import { use, useState, useEffect } from "react";
@@ -21,35 +22,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { policyExplainer, PolicyExplainerOutput } from "@/genkit-flows/policyExplainer";
-
-// Mock database (usually would be in a service)
-const realSchemes = [
-  {
-    id: "pm-kisan",
-    name: "PM Kisan Samman Nidhi",
-    ministry: "Ministry of Agriculture & Farmers Welfare",
-    category: "Agriculture",
-    description: "Direct financial assistance of ₹6,000 per year provided in three equal installments to all landholding farmer families.",
-    fullPolicy: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN) is a central sector scheme that provides income support to all landholding farmers' families in the country to supplement their financial needs for procuring various inputs related to agriculture and allied activities as well as domestic needs. Under the scheme, the entire financial liability for transfer of benefit to appropriate beneficiaries will be borne by Government of India.",
-    benefits: ["₹6,000 annually in 3 installments", "Direct Benefit Transfer (DBT)", "Universal coverage for landholders"],
-    documents: ["Aadhaar Card", "Land holding papers", "Bank Account Details"],
-    howToApply: ["Register on PM-Kisan Portal", "Contact local Patwari/Nodal Officer", "Submit Aadhaar verified documents"],
-    isNational: true
-  },
-  {
-    id: "pmjay",
-    name: "Ayushman Bharat (PM-JAY)",
-    ministry: "Ministry of Health & Family Welfare",
-    category: "Health",
-    description: "Health coverage of up to ₹5 lakh per family per year for secondary and tertiary care hospitalization.",
-    fullPolicy: "Ayushman Bharat PM-JAY is the largest health assurance scheme in the world which aims at providing a health cover of Rs. 5 lakhs per family per year for secondary and tertiary care hospitalization to over 12 crores poor and vulnerable families. PM-JAY is fully funded by the Government and cost of implementation is shared between the Central and State Governments.",
-    benefits: ["₹5 Lakh health cover", "Cashless treatment", "Pre-existing diseases covered from Day 1"],
-    documents: ["Aadhaar Card", "Ration Card", "PM Letter (if available)"],
-    howToApply: ["Check eligibility on portal", "Visit nearest Ayushman Mitra at hospital", "E-card generation"],
-    isNational: true
-  },
-  // ... rest of the schemes would be here
-];
+import { realSchemes } from "@/lib/schemes-data";
 
 export default function SchemeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

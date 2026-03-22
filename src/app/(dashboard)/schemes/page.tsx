@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
@@ -16,92 +17,9 @@ import { UserProfile } from "@/lib/types";
 import { schemeEligibility, SchemeEligibilityOutput } from "@/genkit-flows/schemeEligibility";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { realSchemes } from "@/lib/schemes-data";
 
-const categories = ["Agriculture", "Education", "Health", "Housing", "Women & Child", "Employment", "Pension", "Business"];
-
-const realSchemes = [
-  {
-    id: "pm-kisan",
-    name: "PM Kisan Samman Nidhi",
-    ministry: "Ministry of Agriculture & Farmers Welfare",
-    category: "Agriculture",
-    description: "Direct financial assistance of ₹6,000 per year provided in three equal installments to all landholding farmer families.",
-    type: "Central Sector",
-    eligibilityCriteria: { occupation: "Farmer", income: "Small/Marginal farmers" }
-  },
-  {
-    id: "pmjay",
-    name: "Ayushman Bharat (PM-JAY)",
-    ministry: "Ministry of Health & Family Welfare",
-    category: "Health",
-    description: "Providing health coverage of up to ₹5 lakh per family per year for secondary and tertiary care hospitalization to over 12 crore poor families.",
-    type: "Health Insurance",
-    eligibilityCriteria: { income: "Low income families" }
-  },
-  {
-    id: "pmay",
-    name: "Pradhan Mantri Awas Yojana",
-    ministry: "Ministry of Housing & Urban Affairs",
-    category: "Housing",
-    description: "Aims to provide 'Housing for All' by providing central assistance to implementing agencies for constructing houses for eligible families.",
-    type: "Housing Support",
-    eligibilityCriteria: { income: "EWS/LIG categories" }
-  },
-  {
-    id: "ssy",
-    name: "Sukanya Samriddhi Yojana",
-    ministry: "Ministry of Finance",
-    category: "Women & Child",
-    description: "A high-interest savings scheme for the girl child, offering tax benefits and financial security for education and marriage.",
-    type: "Savings Scheme",
-    eligibilityCriteria: { gender: "Female (child)" }
-  },
-  {
-    id: "pmmy",
-    name: "PM Mudra Yojana",
-    ministry: "Ministry of Finance",
-    category: "Business",
-    description: "Loans up to ₹10 lakh provided to non-corporate, non-farm small/micro enterprises for generating employment and income.",
-    type: "Business Loan",
-    eligibilityCriteria: { occupation: "Small business owner/Entrepreneur" }
-  },
-  {
-    id: "apy",
-    name: "Atal Pension Yojana",
-    ministry: "Ministry of Finance",
-    category: "Pension",
-    description: "Social security scheme for unorganized sector workers, providing a guaranteed minimum pension of ₹1,000 to ₹5,000 after reaching 60.",
-    type: "Social Security",
-    eligibilityCriteria: { age: "18-40 years" }
-  },
-  {
-    id: "pmjdy",
-    name: "PM Jan Dhan Yojana",
-    ministry: "Ministry of Finance",
-    category: "Financial Inclusion",
-    description: "National Mission for Financial Inclusion to ensure access to financial services like banking, savings, and insurance.",
-    type: "Financial Inclusion",
-    eligibilityCriteria: {}
-  },
-  {
-    id: "pmfby",
-    name: "PM Fasal Bima Yojana",
-    ministry: "Ministry of Agriculture & Farmers Welfare",
-    category: "Agriculture",
-    description: "Comprehensive crop insurance scheme providing financial support to farmers suffering crop loss/damage due to unforeseen events.",
-    type: "Crop Insurance",
-    eligibilityCriteria: { occupation: "Farmer" }
-  },
-  {
-    id: "pmsvanidhi",
-    name: "PM SVANidhi",
-    ministry: "Ministry of Housing & Urban Affairs",
-    category: "Business",
-    description: "A special micro-credit facility for street vendors to access affordable working capital loans for business resumption.",
-    type: "Micro Loan",
-    eligibilityCriteria: { occupation: "Street Vendor" }
-  }
-];
+const categories = ["Agriculture", "Education", "Health", "Housing", "Women & Child", "Employment", "Pension", "Business", "Food"];
 
 export default function SchemesPage() {
   const auth = useAuth();
