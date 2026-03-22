@@ -125,34 +125,30 @@ export default function SchemesPage() {
   const [aiResults, setAiResults] = useState<SchemeEligibilityOutput | null>(null);
 
   const userProfileRef = useMemo(() => {
-    if (!auth.currentUser) return null;
-    return doc(db, "users", auth.currentUser.uid);
+    if (!auth.currentUser || !db || !db.type) return null;
+    try {
+      return doc(db, "users", auth.currentUser.uid);
+    } catch (e) {
+      console.warn("Failed to create doc reference:", e);
+      return null;
+    }
   }, [auth.currentUser, db]);
 
   const { data: profile } = useDoc<UserProfile>(userProfileRef);
 
   const handleAiMatch = async () => {
-    if (!profile) {
-      toast({
-        variant: "destructive",
-        title: "Profile required",
-        description: "Please complete your profile to use AI Auto-Match.",
-      });
-      return;
-    }
-
     setIsAiMatching(true);
     try {
       const results = await schemeEligibility({
         userProfile: {
-          age: profile.age || 25,
-          income: profile.income || 3,
-          state: profile.state || "Maharashtra",
-          gender: profile.gender || "All",
-          occupation: profile.occupation || "Service",
-          casteCategory: profile.casteCategory || "General",
-          disabilityStatus: profile.disabilityStatus || false,
-          familySize: profile.familySize || 4,
+          age: profile?.age || 25,
+          income: profile?.income || 3,
+          state: profile?.state || "Maharashtra",
+          gender: profile?.gender || "All",
+          occupation: profile?.occupation || "Service",
+          casteCategory: profile?.casteCategory || "General",
+          disabilityStatus: profile?.disabilityStatus || false,
+          familySize: profile?.familySize || 4,
         },
         schemes: realSchemes.map(s => ({
           id: s.id,
@@ -209,7 +205,7 @@ export default function SchemesPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Scheme Finder</h1>
-          <p className="text-muted-foreground mt-1">Discover 1,200+ central and state government benefits tailored for you.</p>
+          <p className="text-muted-foreground mt-1">Discover central and state government benefits tailored for you.</p>
         </div>
         <div className="flex gap-2">
           {aiResults && (
@@ -266,7 +262,7 @@ export default function SchemesPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Annual Income</Label>
+                  <Label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Annual Income (LPA)</Label>
                   <span className="text-xs font-bold text-primary">₹{profile?.income || 5}L</span>
                 </div>
                 <Slider defaultValue={[profile?.income || 5]} max={15} step={0.5} className="py-2" />

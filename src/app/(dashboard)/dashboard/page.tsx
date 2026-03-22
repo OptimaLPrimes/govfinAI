@@ -50,8 +50,13 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   
   const userProfileRef = useMemo(() => {
-    if (!auth.currentUser) return null;
-    return doc(db, "users", auth.currentUser.uid);
+    if (!auth.currentUser || !db || !db.type) return null;
+    try {
+      return doc(db, "users", auth.currentUser.uid);
+    } catch (e) {
+      console.warn("Failed to create doc reference:", e);
+      return null;
+    }
   }, [auth.currentUser, db]);
 
   const { data: profile, loading } = useDoc<UserProfile>(userProfileRef);
@@ -77,7 +82,7 @@ export default function DashboardPage() {
 
   if (!mounted) return null;
 
-  if (loading) {
+  if (loading && userProfileRef) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
         <div className="relative w-12 h-12">
@@ -109,7 +114,7 @@ export default function DashboardPage() {
               <Link href="/schemes"><Search className="mr-2 h-5 w-5" /> Find Schemes</Link>
             </Button>
             <Button asChild size="lg" className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-white border border-white/20 backdrop-blur-md transition-transform hover:scale-105 active:scale-95">
-              <Link href="/finance/transactions"><Plus className="mr-2 h-5 w-5" /> Track Expense</Link>
+              <Link href="/finance"><Plus className="mr-2 h-5 w-5" /> Track Expense</Link>
             </Button>
           </div>
         </div>
@@ -131,7 +136,7 @@ export default function DashboardPage() {
           <CardContent className="space-y-4">
             <Progress value={profileCompleteness} className="h-2" />
             <p className="text-xs text-muted-foreground">
-              Add your <span className="text-foreground font-medium">family details</span> to unlock 4 more eligible schemes.
+              Add your <span className="text-foreground font-medium">family details</span> to unlock more eligible schemes.
             </p>
             <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" asChild>
               <Link href="/profile">Complete Profile <ChevronRight className="ml-2 h-3 w-3" /></Link>
@@ -225,7 +230,7 @@ export default function DashboardPage() {
           <CardContent className="space-y-6">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 animate-in fade-in duration-1000">
               <p className="text-white/90 leading-relaxed font-medium italic">
-                "Allocate an extra <span className="text-white font-bold underline decoration-white/50">₹500</span> to your Sukanya Samriddhi account to reach your goal 4 months early."
+                "Allocate an extra <span className="text-white font-bold underline decoration-white/50">₹500</span> to your savings to reach your goal 4 months early."
               </p>
             </div>
             <div className="space-y-3">
@@ -289,7 +294,7 @@ export default function DashboardPage() {
           <CardContent className="p-6 relative">
             <div className="space-y-8">
               {[
-                { text: "Added transaction: ₹450 at Grocery", time: "2 hours ago", icon: LayoutGrid, color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
+                { text: "Viewed eligible schemes", time: "2 hours ago", icon: LayoutGrid, color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
                 { text: "Checked eligibility for PM Awas Yojana", time: "5 hours ago", icon: Search, color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400" },
                 { text: "AI Assistant suggested a budget revision", time: "Yesterday", icon: Bot, color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" },
                 { text: "Updated profile information", time: "2 days ago", icon: LayoutGrid, color: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400" },

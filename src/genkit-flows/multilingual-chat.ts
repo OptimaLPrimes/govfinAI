@@ -130,8 +130,7 @@ const multilingualChatFlow = ai.defineFlow(
       contextMessages.push({
         role: 'system',
         content: [{
-          text: `Saved Schemes (ID, Name, Ministry, Category, Brief Description):
-${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category})${s.briefDescription ? ` - ${s.briefDescription}` : ''}`).join('\n')}`
+          text: `Saved Schemes (ID, Name, Ministry, Category, Brief Description):\n${savedSchemes.map(s => `- ${s.schemeId}: ${s.name} (${s.ministry}, ${s.category})${s.briefDescription ? ` - ${s.briefDescription}` : ''}`).join('\n')}`
         }],
       });
     }

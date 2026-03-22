@@ -6,70 +6,71 @@ import { getAuth, Auth } from 'firebase/auth';
 import { firebaseConfig } from './config';
 
 /**
- * Initializes Firebase and provides a robust mock Auth object.
- * Ensuring the app never crashes even if configuration is missing.
+ * Initializes Firebase and provides a robust mock system.
+ * This ensures the app doesn't crash even if the Firebase configuration is invalid or missing.
  */
 export function initializeFirebase(): { app: FirebaseApp; db: Firestore; auth: Auth } {
   let app: any;
   let db: any;
+  let auth: any;
   
   try {
-    // Check if configuration is at least partially valid
-    const isValidConfig = firebaseConfig.projectId && firebaseConfig.projectId !== "undefined";
+    const isValidConfig = firebaseConfig.projectId && firebaseConfig.projectId !== "undefined" && firebaseConfig.apiKey !== "placeholder-api-key";
     
     if (isValidConfig) {
       app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
       db = getFirestore(app);
+      auth = getAuth(app);
     } else {
-      console.warn("Firebase Project ID is missing. Running in local-only demo mode.");
+      console.warn("Firebase configuration is missing or invalid. Running in demo mode.");
       app = { options: {} } as any;
-      db = {} as any;
+      db = { type: 'firestore', _databaseId: { projectId: 'demo' } } as any;
+      auth = { app } as any;
     }
   } catch (error) {
     console.error("Firebase Services failed to initialize:", error);
     app = { options: {} } as any;
-    db = {} as any;
+    db = { type: 'firestore' } as any;
+    auth = { app } as any;
   }
   
-  // Mock Auth system - Always present to prevent 'undefined' crashes
-  const auth = {
-    app,
-    currentUser: {
-      uid: 'public-demo-user',
-      displayName: 'Gov Visitor',
-      email: 'visitor@govfin.ai',
-      photoURL: 'https://picsum.photos/seed/visitor/100/100',
-      emailVerified: true,
-      isAnonymous: false,
-      metadata: {},
-      providerData: [],
-      refreshToken: '',
-      tenantId: null,
-      delete: async () => {},
-      getIdToken: async () => 'mock-token',
-      getIdTokenResult: async () => ({}) as any,
-      reload: async () => {},
-      toJSON: () => ({}),
-      phoneNumber: null,
-    } as any,
-    onAuthStateChanged: (callback: (user: any) => void) => {
-      callback({
-        uid: 'public-demo-user',
-        displayName: 'Gov Visitor',
-        email: 'visitor@govfin.ai',
-        photoURL: 'https://picsum.photos/seed/visitor/100/100'
-      });
-      return () => {}; 
-    },
-    onIdTokenChanged: (callback: any) => {
-      callback({ uid: 'public-demo-user' });
-      return () => {};
-    },
-    signOut: async () => Promise.resolve(),
-    authStateReady: async () => Promise.resolve(),
-  } as unknown as Auth;
+  // Standardized Mock Auth User for Demo Mode
+  const mockUser = {
+    uid: 'public-demo-user',
+    displayName: 'Gov Visitor',
+    email: 'visitor@govfin.ai',
+    photoURL: 'https://picsum.photos/seed/visitor/100/100',
+    emailVerified: true,
+    isAnonymous: false,
+    metadata: {},
+    providerData: [],
+    refreshToken: '',
+    tenantId: null,
+    delete: async () => {},
+    getIdToken: async () => 'mock-token',
+    getIdTokenResult: async () => ({}) as any,
+    reload: async () => {},
+    toJSON: () => ({}),
+    phoneNumber: null,
+  };
 
-  return { app, db, auth };
+  // Ensure auth object has necessary methods for hooks
+  if (!auth.currentUser) {
+    auth.currentUser = mockUser;
+  }
+  
+  if (!auth.onAuthStateChanged) {
+    auth.onAuthStateChanged = (callback: any) => {
+      callback(mockUser);
+      return () => {};
+    };
+  }
+
+  if (!auth.signOut) {
+    auth.signOut = async () => Promise.resolve();
+  }
+
+  return { app, db, auth: auth as Auth };
 }
 
 export * from './provider';
