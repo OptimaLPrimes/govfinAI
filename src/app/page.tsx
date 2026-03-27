@@ -38,7 +38,6 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-500 overflow-x-hidden">
-      {/* Navbar */}
       <header className="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-border/50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
@@ -61,9 +60,7 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1">
-        {/* Hero Section */}
         <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-          {/* Background Visual Elements */}
           <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
           <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
           <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
@@ -77,7 +74,7 @@ export default function LandingPage() {
               
               <h1 className="text-6xl lg:text-8xl font-black tracking-tight leading-[0.9] text-slate-900 dark:text-white">
                 Empowering <br />
-                <span className="text-transparent bg-clip-text indigo-gradient">Bharat</span> with AI.
+                <span className="text-transparent bg-clip-text indigo-gradient">Every Citizen</span> with AI.
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed font-medium">
@@ -110,9 +107,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Hero Visual Animation */}
             <div className="relative animate-in fade-in slide-in-from-right-12 duration-1000 delay-300">
-              {/* Main Image Container */}
               <div className="relative z-10 p-3 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[3rem] shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700">
                 <div className="relative overflow-hidden rounded-[2.5rem]">
                   <Image 
@@ -127,7 +122,6 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Floating Insight Cards */}
               <div className="absolute -top-10 -right-10 glass-morphism p-5 rounded-3xl animate-float z-20 max-w-[200px]">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -166,7 +160,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Features Grid */}
         <section id="features" className="py-32 bg-slate-50 dark:bg-slate-900/50 relative">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-24 space-y-6">
@@ -210,7 +203,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Impact Section */}
         <section id="impact" className="py-32 overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="glass-morphism p-12 md:p-20 rounded-[4rem] relative overflow-hidden indigo-gradient text-white">

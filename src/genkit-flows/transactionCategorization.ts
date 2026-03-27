@@ -1,10 +1,6 @@
 'use server';
 /**
  * @fileOverview An AI agent to categorize financial transactions based on a description.
- *
- * - aiCategorizeTransaction - A function that handles the transaction categorization process.
- * - AICategorizeTransactionInput - The input type for the aiCategorizeTransaction function.
- * - AICategorizeTransactionOutput - The return type for the aiCategorizeTransaction function.
  */
 
 import { ai } from '@/ai/genkit';
@@ -54,7 +50,6 @@ const transactionCategorizationFlow = ai.defineFlow(
     name: 'transactionCategorizationFlow',
     inputSchema: AICategorizeTransactionInputSchema,
     outputSchema: AICategorizeTransactionOutputSchema,
-    // Using gemini-1.5-flash for faster categorization
     model: 'googleai/gemini-1.5-flash',
   },
   async (input) => {

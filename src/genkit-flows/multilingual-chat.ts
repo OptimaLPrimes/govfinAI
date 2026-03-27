@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Genkit flow for a multilingual AI assistant that helps Indian citizens
@@ -68,7 +67,6 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    // Consolidate all system context into ONE system instruction at the very beginning
     let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances.
 Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.
 
@@ -92,13 +90,11 @@ USER PROFILE:
 
     const combinedMessages: MessageData[] = [];
 
-    // System instruction MUST be the first message and the only one with 'system' role
     combinedMessages.push({
       role: 'system',
       content: [{ text: systemInstruction }],
     });
 
-    // Add conversation history
     messages.forEach(m => {
       combinedMessages.push({
         role: m.role as any,

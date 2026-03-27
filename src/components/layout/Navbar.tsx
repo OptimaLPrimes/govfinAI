@@ -66,8 +66,8 @@ export function Navbar() {
   };
 
   const userProfileRef = useMemo(() => {
-    // CRITICAL: Prevent SDK crash by ensuring db is not a mock before calling doc()
-    if (!user || !db || (db as any).__isMock) return null;
+    // CRITICAL: Defensive check to prevent SDK crashes during initialization or demo mode
+    if (!user || !db || (db as any).__isMock || typeof db.collection !== 'function') return null;
     try {
       return doc(db, "users", user.uid);
     } catch (e) {
@@ -80,14 +80,12 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto h-16 flex items-center justify-between px-4">
-        {/* Logo */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl tracking-tighter shrink-0 hover:scale-105 transition-transform">
             <div className="w-8 h-8 rounded-lg indigo-gradient flex items-center justify-center text-white shadow-lg">G</div>
             <span className="hidden sm:inline">Gov<span className="text-primary">Fin</span>AI</span>
           </Link>
 
-          {/* Desktop Links */}
           <div className="hidden lg:flex items-center gap-1">
             {mainNavItems.map((item) => {
               const active = pathname === item.href;
@@ -106,7 +104,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Desktop Actions */}
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full transition-all duration-300 hover:bg-muted">
@@ -166,7 +163,6 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Mobile Menu Trigger */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden h-9 w-9 rounded-full border border-border">
