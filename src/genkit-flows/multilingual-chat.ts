@@ -1,7 +1,8 @@
+
 'use server';
 /**
  * @fileOverview A Genkit flow for a multilingual AI assistant that helps Indian citizens
- * with government schemes, personal finances, and policy explanations.
+ * with government welfare schemes and personal finances.
  */
 
 import { ai } from '@/ai/genkit';
@@ -14,11 +15,11 @@ const ChatMessageSchema = z.object({
 });
 
 const TransactionContextSchema = z.object({
-  amount: z.number().describe('The amount of the transaction.'),
-  category: z.string().describe('The category of the transaction.'),
-  type: z.enum(['income', 'expense']).describe('The type of transaction.'),
-  note: z.string().describe('A short description.'),
-  date: z.string().describe('The date in YYYY-MM-DD format.'),
+  amount: z.number(),
+  category: z.string(),
+  type: z.enum(['income', 'expense']),
+  note: z.string(),
+  date: z.string(),
 });
 
 const SavedSchemeContextSchema = z.object({
@@ -51,10 +52,7 @@ const MultilingualChatInputSchema = z.object({
 });
 export type MultilingualChatInput = z.infer<typeof MultilingualChatInputSchema>;
 
-const MultilingualChatOutputSchema = z.string();
-export type MultilingualChatOutput = z.infer<typeof MultilingualChatOutputSchema>;
-
-export async function multilingualChat(input: MultilingualChatInput): Promise<MultilingualChatOutput> {
+export async function multilingualChat(input: MultilingualChatInput): Promise<string> {
   return multilingualChatFlow(input);
 }
 
@@ -62,38 +60,31 @@ const multilingualChatFlow = ai.defineFlow(
   {
     name: 'multilingualChatFlow',
     inputSchema: MultilingualChatInputSchema,
-    outputSchema: MultilingualChatOutputSchema,
+    outputSchema: z.string(),
   },
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    // Consolidate all system instructions into a single string for Gemini compatibility
-    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.
+    // Gemini requirement: single system message at the start
+    let systemPrompt = `You are GovFinAI Assistant, an expert advisor helping Indian citizens with welfare schemes and finance. Always respond in ${targetLanguage}.
 
 USER PROFILE:
 - Name: ${userProfile.name}
-- State: ${userProfile.state}
-- Age: ${userProfile.age}
-- Income: ${userProfile.income} LPA
-- Occupation: ${userProfile.occupation || 'N/A'}
-- Gender: ${userProfile.gender || 'N/A'}
-- Social Category: ${userProfile.casteCategory || 'General'}
-- Disability Status: ${userProfile.disability || 'None'}
+- Residence: ${userProfile.state}
+- Profile: Age ${userProfile.age}, Income ${userProfile.income} LPA, Category ${userProfile.casteCategory || 'General'}
+- Occupation: ${userProfile.occupation || 'Service'}
 `;
 
-    if (recentTransactions && recentTransactions.length > 0) {
-      systemInstruction += `\nRECENT TRANSACTIONS:\n${recentTransactions.map(t => `- ${t.date}: ${t.type} of ₹${t.amount} in ${t.category} (${t.note})`).join('\n')}\n`;
+    if (recentTransactions?.length) {
+      systemPrompt += `\nRECENT FINANCES:\n${recentTransactions.map(t => `- ${t.date}: ${t.type} of ₹${t.amount} in ${t.category}`).join('\n')}\n`;
     }
 
-    if (savedSchemes && savedSchemes.length > 0) {
-      systemInstruction += `\nSAVED SCHEMES:\n${savedSchemes.map(s => `- ${s.name} (${s.ministry}, ${s.category})`).join('\n')}\n`;
+    if (savedSchemes?.length) {
+      systemPrompt += `\nINTERESTED SCHEMES:\n${savedSchemes.map(s => `- ${s.name} (${s.ministry})`).join('\n')}\n`;
     }
 
     const combinedMessages: MessageData[] = [
-      {
-        role: 'system',
-        content: [{ text: systemInstruction }],
-      },
+      { role: 'system', content: [{ text: systemPrompt }] },
       ...messages.map(m => ({
         role: m.role as any,
         content: [{ text: m.content }]
@@ -103,9 +94,7 @@ USER PROFILE:
     const { response } = await ai.generate({
       model: 'googleai/gemini-1.5-flash',
       messages: combinedMessages,
-      config: {
-        temperature: 0.7,
-      },
+      config: { temperature: 0.7 }
     });
 
     return response.text;
