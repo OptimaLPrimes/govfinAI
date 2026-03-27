@@ -67,8 +67,8 @@ const multilingualChatFlow = ai.defineFlow(
   async (input) => {
     const { messages, userProfile, targetLanguage, recentTransactions, savedSchemes } = input;
 
-    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances.
-Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.
+    // Consolidate all system instructions into a single string for Gemini compatibility
+    let systemInstruction = `You are GovFinAI Assistant, helping Indian citizens understand government welfare schemes and manage personal finances. Always respond in ${targetLanguage}. Be empathetic, clear, and helpful.
 
 USER PROFILE:
 - Name: ${userProfile.name}
@@ -78,29 +78,27 @@ USER PROFILE:
 - Occupation: ${userProfile.occupation || 'N/A'}
 - Gender: ${userProfile.gender || 'N/A'}
 - Social Category: ${userProfile.casteCategory || 'General'}
-- Disability: ${userProfile.disability || 'None'}`;
+- Disability Status: ${userProfile.disability || 'None'}
+`;
 
     if (recentTransactions && recentTransactions.length > 0) {
-      systemInstruction += `\n\nRECENT TRANSACTIONS:\n${JSON.stringify(recentTransactions, null, 2)}`;
+      systemInstruction += `\nRECENT TRANSACTIONS:\n${recentTransactions.map(t => `- ${t.date}: ${t.type} of ₹${t.amount} in ${t.category} (${t.note})`).join('\n')}\n`;
     }
 
     if (savedSchemes && savedSchemes.length > 0) {
-      systemInstruction += `\n\nSAVED SCHEMES:\n${savedSchemes.map(s => `- ${s.name} (${s.ministry}, ${s.category})`).join('\n')}`;
+      systemInstruction += `\nSAVED SCHEMES:\n${savedSchemes.map(s => `- ${s.name} (${s.ministry}, ${s.category})`).join('\n')}\n`;
     }
 
-    const combinedMessages: MessageData[] = [];
-
-    combinedMessages.push({
-      role: 'system',
-      content: [{ text: systemInstruction }],
-    });
-
-    messages.forEach(m => {
-      combinedMessages.push({
+    const combinedMessages: MessageData[] = [
+      {
+        role: 'system',
+        content: [{ text: systemInstruction }],
+      },
+      ...messages.map(m => ({
         role: m.role as any,
         content: [{ text: m.content }]
-      });
-    });
+      }))
+    ];
 
     const { response } = await ai.generate({
       model: 'googleai/gemini-1.5-flash',

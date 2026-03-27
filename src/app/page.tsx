@@ -72,9 +72,9 @@ export default function LandingPage() {
                 <span className="text-xs font-bold uppercase tracking-widest">Next-Gen Financial Inclusion</span>
               </div>
               
-              <h1 className="text-6xl lg:text-8xl font-black tracking-tight leading-[0.9] text-slate-900 dark:text-white">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.1] text-slate-900 dark:text-white">
                 Empowering <br />
-                <span className="text-transparent bg-clip-text indigo-gradient">Every Citizen</span> with AI.
+                <span className="text-transparent bg-clip-text indigo-gradient">Bharat</span> with AI.
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed font-medium">
@@ -163,7 +163,7 @@ export default function LandingPage() {
         <section id="features" className="py-32 bg-slate-50 dark:bg-slate-900/50 relative">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-24 space-y-6">
-              <h2 className="text-4xl md:text-6xl font-black tracking-tight">Built for Inclusivity.</h2>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tight">Built for Bharat.</h2>
               <p className="text-xl text-muted-foreground font-medium">We've combined deep government insights with state-of-the-art AI to serve every citizen.</p>
             </div>
             

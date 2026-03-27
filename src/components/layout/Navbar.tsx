@@ -67,7 +67,7 @@ export function Navbar() {
 
   const userProfileRef = useMemo(() => {
     // CRITICAL: Defensive check to prevent SDK crashes during initialization or demo mode
-    if (!user || !db || (db as any).__isMock || typeof db.collection !== 'function') return null;
+    if (!user || !db || (db as any).__isMock) return null;
     try {
       return doc(db, "users", user.uid);
     } catch (e) {
