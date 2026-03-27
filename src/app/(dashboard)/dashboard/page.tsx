@@ -16,7 +16,6 @@ import {
   ArrowUpRight,
   ShieldCheck,
   Zap,
-  Clock,
   Sparkles,
   ChevronRight,
 } from "lucide-react";
@@ -93,23 +92,23 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="relative overflow-hidden rounded-3xl indigo-gradient p-8 md:p-12 text-white shadow-2xl transition-all duration-500 hover:shadow-primary/20">
+      <div className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] indigo-gradient p-8 md:p-12 text-white shadow-2xl transition-all duration-500 hover:shadow-primary/20">
         <div className="relative z-10 max-w-2xl">
           <Badge className="mb-4 bg-white/20 text-white border-none backdrop-blur-md animate-in slide-in-from-top-4 duration-700">
             <Sparkles className="mr-1 h-3 w-3" />
             AI-Powered Dashboard
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight animate-in slide-in-from-left-4 duration-700">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight animate-in slide-in-from-left-4 duration-700">
             Welcome back, {profile?.name || "User"}
           </h1>
           <p className="mt-2 text-white/80 text-lg animate-in slide-in-from-left-4 duration-700 delay-100">
             {currentDate}
           </p>
           <div className="mt-8 flex flex-wrap gap-4 animate-in slide-in-from-bottom-4 duration-700 delay-200">
-            <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 shadow-lg px-8 transition-transform hover:scale-105 active:scale-95">
+            <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90 shadow-lg px-8 transition-transform hover:scale-105 active:scale-95 rounded-2xl">
               <Link href="/schemes"><Search className="mr-2 h-5 w-5" /> Find Schemes</Link>
             </Button>
-            <Button asChild size="lg" className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-white border border-white/20 backdrop-blur-md transition-transform hover:scale-105 active:scale-95">
+            <Button asChild size="lg" className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-white border border-white/20 backdrop-blur-md transition-transform hover:scale-105 active:scale-95 rounded-2xl">
               <Link href="/finance"><Plus className="mr-2 h-5 w-5" /> Track Expense</Link>
             </Button>
           </div>
@@ -120,7 +119,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <Card className="lg:col-span-1 border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50 overflow-hidden group hover:shadow-md transition-all duration-300">
+        <Card className="lg:col-span-1 border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50 rounded-[2rem] overflow-hidden group hover:shadow-md transition-all duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center justify-between">
               Profile Score
@@ -133,7 +132,7 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">
               Add your <span className="text-foreground font-medium">family details</span> to unlock more eligible schemes.
             </p>
-            <Button variant="outline" size="sm" className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300" asChild>
+            <Button variant="outline" size="sm" className="w-full rounded-xl group-hover:bg-primary group-hover:text-white transition-colors duration-300" asChild>
               <Link href="/profile">Complete Profile <ChevronRight className="ml-2 h-3 w-3" /></Link>
             </Button>
           </CardContent>
@@ -141,7 +140,7 @@ export default function DashboardPage() {
 
         <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {metrics.map((m, i) => (
-            <Card key={i} className="border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50 hover:shadow-md transition-all duration-300 cursor-default animate-in fade-in slide-in-from-right-4" style={{ animationDelay: `${i * 100}ms` }}>
+            <Card key={i} className="border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50 rounded-[2rem] hover:shadow-md transition-all duration-300 cursor-default animate-in fade-in slide-in-from-right-4" style={{ animationDelay: `${i * 100}ms` }}>
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start">
                   <div>
@@ -155,7 +154,7 @@ export default function DashboardPage() {
                       <span className="text-[10px] text-muted-foreground uppercase font-medium">this month</span>
                     </div>
                   </div>
-                  <div className={`p-3 rounded-2xl ${m.color} transition-transform group-hover:rotate-12`}>
+                  <div className={`p-4 rounded-[1.5rem] ${m.color} transition-transform group-hover:rotate-12`}>
                     <m.icon className="h-6 w-6" />
                   </div>
                 </div>
@@ -166,17 +165,17 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="lg:col-span-2 border-none shadow-sm dark:bg-card/50 dark:border dark:border-border/50 rounded-[2rem]">
+          <CardHeader className="flex flex-row items-center justify-between px-8 pt-8">
             <div>
               <CardTitle className="text-xl">Spending Trends</CardTitle>
               <CardDescription>Overview of your daily financial activity.</CardDescription>
             </div>
-            <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5" asChild>
+            <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5 rounded-xl" asChild>
               <Link href="/finance">Detailed View</Link>
             </Button>
           </CardHeader>
-          <CardContent className="h-[320px] mt-4">
+          <CardContent className="h-[320px] mt-4 px-8 pb-8">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
@@ -196,9 +195,9 @@ export default function DashboardPage() {
                 <Tooltip 
                   cursor={{fill: 'currentColor', opacity: 0.05}}
                   contentStyle={{ 
-                    borderRadius: '12px', 
+                    borderRadius: '16px', 
                     border: 'none', 
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
                     backgroundColor: 'hsl(var(--card))',
                     color: 'hsl(var(--card-foreground))'
                   }}
@@ -218,32 +217,32 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-lg accent-gradient text-white flex flex-col justify-between overflow-hidden relative group">
+        <Card className="border-none shadow-lg accent-gradient text-white flex flex-col justify-between overflow-hidden relative group rounded-[2rem]">
           <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl transition-transform duration-700 group-hover:scale-150"></div>
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-md transition-transform group-hover:rotate-12">
-                <Bot className="h-5 w-5" />
+          <CardHeader className="p-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-md transition-transform group-hover:rotate-12 shadow-xl">
+                <Bot className="h-6 w-6" />
               </div>
-              <CardTitle className="text-lg">AI Financial Coach</CardTitle>
+              <CardTitle className="text-xl">AI Financial Coach</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 animate-in fade-in duration-1000">
-              <p className="text-white/90 leading-relaxed font-medium italic">
+          <CardContent className="space-y-6 px-8">
+            <div className="bg-white/10 backdrop-blur-md rounded-[1.5rem] p-6 border border-white/20 animate-in fade-in duration-1000 shadow-inner">
+              <p className="text-white/90 leading-relaxed font-medium italic text-lg">
                 "Allocate an extra <span className="text-white font-bold underline decoration-white/50">₹500</span> to your savings to reach your goal 4 months early."
               </p>
             </div>
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white/70">Top Suggestion</h4>
-              <div className="flex items-center gap-3 bg-black/10 rounded-xl p-3 transition-colors hover:bg-black/20 cursor-pointer">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/70">Top Suggestion</h4>
+              <div className="flex items-center gap-3 bg-black/10 rounded-2xl p-4 transition-all hover:bg-black/20 cursor-pointer border border-white/5">
                 <ShieldCheck className="h-5 w-5 text-white/90" />
-                <span className="text-sm font-medium">Verify PM Kisan eligibility</span>
+                <span className="text-sm font-bold">Verify PM Kisan eligibility</span>
               </div>
             </div>
           </CardContent>
-          <CardContent className="pt-0 pb-6">
-            <Button variant="secondary" className="w-full bg-white text-emerald-600 font-bold hover:bg-white/90 shadow-xl transition-all duration-300 hover:scale-[1.02]" asChild>
+          <CardContent className="pt-0 pb-8 px-8">
+            <Button variant="secondary" className="w-full bg-white text-accent font-bold hover:bg-white/90 shadow-2xl transition-all duration-300 hover:scale-[1.02] h-14 rounded-2xl" asChild>
               <Link href="/assistant">Chat with AI Assistant</Link>
             </Button>
           </CardContent>

@@ -1,4 +1,3 @@
-
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -27,35 +26,31 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: '#4F46E5',
-          foreground: '#FFFFFF',
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: '#F3F4F6',
-          foreground: '#1F2937',
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         muted: {
-          DEFAULT: '#F9FAFB',
-          foreground: '#6B7280',
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: '#10B981',
-          foreground: '#FFFFFF',
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        warning: {
-          DEFAULT: '#F59E0B',
-          foreground: '#FFFFFF',
-        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: '#4F46E5',
+        ring: 'hsl(var(--ring))',
         chart: {
-          '1': '#4F46E5',
-          '2': '#10B981',
+          '1': 'hsl(var(--primary))',
+          '2': 'hsl(var(--accent))',
           '3': '#F59E0B',
           '4': '#6366F1',
           '5': '#34D399',
@@ -63,18 +58,18 @@ export default {
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
-          primary: '#4F46E5',
-          'primary-foreground': '#FFFFFF',
-          accent: '#EEF2FF',
-          'accent-foreground': '#4F46E5',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
-          ring: '#4F46E5',
+          ring: 'hsl(var(--sidebar-ring))',
         },
       },
       borderRadius: {
-        lg: '12px',
-        md: '8px',
-        sm: '4px',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
         'accordion-down': {

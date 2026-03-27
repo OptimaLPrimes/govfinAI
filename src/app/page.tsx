@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -54,7 +53,7 @@ export default function LandingPage() {
             <Link href="/schemes" className="text-sm font-semibold hover:text-primary transition-colors">Scheme Finder</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full hover:bg-muted/50">
+            <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full hover:bg-muted/50 transition-all">
               {isDarkMode ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5 text-slate-700" />}
             </Button>
             <Button asChild className="indigo-gradient hover:opacity-90 transition-all hover:scale-105 active:scale-95 px-6 rounded-xl font-bold shadow-md">
@@ -66,11 +65,11 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center pt-24 pb-20 overflow-hidden">
+        <section className="relative min-h-[95vh] flex items-center pt-24 pb-20 overflow-hidden">
           {/* Animated Background Blobs */}
-          <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-500/20 rounded-full filter blur-[100px] animate-blob"></div>
-          <div className="absolute top-0 -right-4 w-96 h-96 bg-indigo-500/20 rounded-full filter blur-[100px] animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[800px] h-96 bg-emerald-500/10 rounded-full filter blur-[120px] animate-blob animation-delay-4000"></div>
+          <div className="absolute top-0 -left-4 w-96 h-96 bg-primary/20 rounded-full filter blur-[100px] animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-96 h-96 bg-purple-500/20 rounded-full filter blur-[100px] animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[800px] h-96 bg-accent/10 rounded-full filter blur-[120px] animate-blob animation-delay-4000"></div>
 
           <div className="container mx-auto px-4 grid lg:grid-cols-12 gap-16 items-center relative z-10">
             <div className="lg:col-span-7 space-y-10 animate-in fade-in slide-in-from-left-8 duration-1000">
@@ -79,7 +78,7 @@ export default function LandingPage() {
                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">Next-Gen Financial Inclusion</span>
               </div>
               
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.9] text-slate-900 dark:text-white">
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.85] text-slate-900 dark:text-white">
                 Empowering <br />
                 <span className="text-transparent bg-clip-text indigo-gradient">Bharat</span> <br />
                 with AI.
@@ -184,7 +183,7 @@ export default function LandingPage() {
                   title: "Smart Scheme Discovery",
                   desc: "Our AI analyzes 1,200+ schemes to find the exact ones you qualify for instantly, matching state and central benefits.",
                   icon: Search,
-                  color: "bg-blue-600",
+                  color: "bg-primary",
                   delay: "0ms"
                 },
                 {
@@ -198,7 +197,7 @@ export default function LandingPage() {
                   title: "Insightful Wallet",
                   desc: "Track every rupee with automated AI categorization and personalized saving nudges tailored to Indian context.",
                   icon: TrendingUp,
-                  color: "bg-emerald-600",
+                  color: "bg-accent",
                   delay: "400ms"
                 }
               ].map((f, i) => (
@@ -269,7 +268,7 @@ export default function LandingPage() {
                 <div className="w-10 h-10 rounded-xl indigo-gradient flex items-center justify-center text-white shadow-lg">G</div>
                 <span>GovFinAI</span>
               </div>
-              <p className="text-muted-foreground max-w-sm font-medium leading-relaxed">
+              <p className="text-muted-foreground max-sm font-medium leading-relaxed">
                 Making financial inclusion a reality for 1.4 billion people, one interaction at a time through advanced AI and linguistic support.
               </p>
             </div>
@@ -298,4 +297,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
